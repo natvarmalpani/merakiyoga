@@ -6,7 +6,7 @@ import { YogaStyle, Asana, Course, ClassSession, PricingPlan, BlogPost } from '.
 
 const RouterContext = createContext<any>({ path: '/', state: null, navigate: () => {} });
 
-export const BrowserRouter = ({ children }: { children: React.ReactNode }) => {
+export const BrowserRouter = ({ children }: { children?: React.ReactNode }) => {
   const [path, setPath] = useState(typeof window !== 'undefined' ? window.location.pathname : '/');
   const [state, setState] = useState<any>(typeof window !== 'undefined' ? window.history.state : null);
 
@@ -29,7 +29,7 @@ export const BrowserRouter = ({ children }: { children: React.ReactNode }) => {
   return React.createElement(RouterContext.Provider, { value: { path, state, navigate } }, children);
 };
 
-export const Routes = ({ children }: { children: React.ReactNode }) => {
+export const Routes = ({ children }: { children?: React.ReactNode }) => {
   const { path } = useContext(RouterContext);
   let match: React.ReactNode = null;
 
