@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
 import { Eye, EyeOff, Lock, Mail, AlertTriangle, ArrowRight, CheckCircle, WifiOff, HelpCircle, UserPlus } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../services/supabaseClient';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '../services/dataService';
 
 const AdminLogin = () => {
   const navigate = useNavigate();

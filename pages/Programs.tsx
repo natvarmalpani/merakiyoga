@@ -1,9 +1,8 @@
-
 import React, { useEffect, useState } from 'react';
 import { getPrograms } from '../services/programService';
 import { Course } from '../types';
 import { Clock, BarChart, Loader2, Info, Download, FileText, ArrowRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '../services/dataService';
 
 const Programs = () => {
   const navigate = useNavigate();

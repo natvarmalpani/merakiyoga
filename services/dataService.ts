@@ -1,5 +1,99 @@
-
+import React, { useState, useEffect, useContext, createContext } from 'react';
 import { YogaStyle, Asana, Course, ClassSession, PricingPlan, BlogPost } from '../types';
+
+// --- MINIMAL ROUTER IMPLEMENTATION ---
+// Polyfill for missing react-router-dom in this environment
+
+const RouterContext = createContext<any>({ path: '/', state: null, navigate: () => {} });
+
+export const BrowserRouter = ({ children }: { children: React.ReactNode }) => {
+  const [path, setPath] = useState(typeof window !== 'undefined' ? window.location.pathname : '/');
+  const [state, setState] = useState<any>(typeof window !== 'undefined' ? window.history.state : null);
+
+  useEffect(() => {
+    const onPop = () => {
+      setPath(window.location.pathname);
+      setState(window.history.state);
+    };
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
+
+  const navigate = (to: string, opts?: { state?: any }) => {
+    window.history.pushState(opts?.state, '', to);
+    setPath(to);
+    setState(opts?.state);
+    window.scrollTo(0, 0);
+  };
+
+  return React.createElement(RouterContext.Provider, { value: { path, state, navigate } }, children);
+};
+
+export const Routes = ({ children }: { children: React.ReactNode }) => {
+  const { path } = useContext(RouterContext);
+  let match: React.ReactNode = null;
+
+  React.Children.forEach(children, (child) => {
+    if (match) return;
+    if (React.isValidElement(child)) {
+      const props = child.props as any;
+      const routePath = props.path;
+      
+      if (routePath === path) {
+         match = props.element;
+      } else if (routePath && routePath.includes('/:')) {
+         // Simple param matching for /blog/:slug
+         const base = routePath.split('/:')[0]; // "/blog/"
+         // Ensure it matches start and has same number of segments
+         if (path.startsWith(base) && path.split('/').length === routePath.split('/').length) {
+             match = props.element;
+         }
+      } else if (routePath === '*') {
+          // Fallback
+          match = props.element;
+      }
+    }
+  });
+  return match ? React.cloneElement(match as React.ReactElement) : null;
+};
+
+export const Route = (_props: { path: string, element: React.ReactNode }) => null;
+
+export const Link = ({ to, children, className, ...props }: any) => {
+  const { navigate } = useContext(RouterContext);
+  return React.createElement('a', {
+    href: to,
+    className,
+    onClick: (e: any) => {
+      e.preventDefault();
+      navigate(to);
+    },
+    ...props
+  }, children);
+};
+
+export const useLocation = () => {
+  const { path, state } = useContext(RouterContext);
+  return { pathname: path, state };
+};
+
+export const useNavigate = () => {
+  const { navigate } = useContext(RouterContext);
+  return navigate;
+};
+
+export const useParams = <T extends Record<string, string>>(): T => {
+    const { path } = useContext(RouterContext);
+    const parts = path.split('/');
+    // Hardcoded parser for known routes
+    if (parts[1] === 'blog' && parts[2]) {
+        return { slug: parts[2] } as any;
+    }
+    return {} as any;
+};
+
+// --- END ROUTER IMPLEMENTATION ---
+
 
 // Mock Data for Yoga Styles
 export const yogaStyles: YogaStyle[] = [

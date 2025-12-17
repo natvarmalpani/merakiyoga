@@ -1,9 +1,8 @@
-
 import React, { useEffect, useState } from 'react';
 import { getSchedule } from '../services/scheduleService';
 import { ClassSession } from '../types';
 import { Calendar, Clock, MapPin, User, Loader2, Info } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '../services/dataService';
 
 const Schedule = () => {
   const navigate = useNavigate();

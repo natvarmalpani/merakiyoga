@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
 import { Mail, MapPin, Phone, Send, Loader2, AlertCircle } from 'lucide-react';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from '../services/dataService';
 import { createInquiry } from '../services/contactService';
 
 const Contact = () => {

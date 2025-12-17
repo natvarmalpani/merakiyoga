@@ -1,9 +1,8 @@
-
 import React, { useEffect, useState } from 'react';
 import { getBlogPosts } from '../services/blogService';
 import { BlogPost } from '../types';
 import { Loader2, Info, AlertCircle, RefreshCcw, Heart, MessageCircle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '../services/dataService';
 
 const Blog = () => {
   const navigate = useNavigate();

@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '../services/dataService';
 import { supabase } from '../services/supabaseClient';
 import { getStyles, createStyle, deleteStyle, updateStyle } from '../services/styleService';
 import { getSchedule, createSession, updateSession, deleteSession } from '../services/scheduleService';

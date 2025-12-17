@@ -1,6 +1,5 @@
-
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from '../services/dataService';
 import { ArrowRight, Leaf, Heart, Sun, Star, User } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getFeedback } from '../services/feedbackService';

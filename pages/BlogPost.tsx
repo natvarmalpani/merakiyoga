@@ -1,6 +1,5 @@
-
 import React, { useEffect, useState, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from '../services/dataService';
 import { getBlogPostBySlug, getComments, addComment, incrementBlogLikes, deleteComment } from '../services/blogService';
 import { BlogPost as BlogPostType, BlogComment } from '../types';
 import { supabase } from '../services/supabaseClient';

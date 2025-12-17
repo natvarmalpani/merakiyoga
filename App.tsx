@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { HashRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation } from './services/dataService';
 import { Menu, X, Instagram, Facebook, MapPin, Mail, Phone, Lock } from 'lucide-react';
 
 // Pages
