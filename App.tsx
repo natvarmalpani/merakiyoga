@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from './services/dataService';
 import { Menu, X, Instagram, Facebook, MapPin, Mail, Phone, Lock } from 'lucide-react';
@@ -30,9 +31,10 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Close mobile menu ONLY when the route path actually changes
   useEffect(() => {
     setIsOpen(false);
-  }, [location]);
+  }, [location.pathname]);
 
   // SAFE TO RETURN HERE: All hooks have been called
   if (isHidden) {
@@ -51,15 +53,18 @@ const Navbar = () => {
     { name: 'Contact', path: '/contact' },
   ];
 
+  // Force solid background if scrolled OR if menu is open on mobile
+  const isSolid = scrolled || isOpen;
+
   return (
-    <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/90 backdrop-blur-md shadow-sm py-3' : 'bg-transparent py-5'}`}>
+    <nav className={`fixed w-full z-50 transition-all duration-300 ${isSolid ? 'bg-white/95 backdrop-blur-md shadow-sm py-3' : 'bg-transparent py-5'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
           <Link to="/" className="flex flex-col items-start group">
-            <span className={`font-serif text-2xl font-bold tracking-tight leading-none ${scrolled ? 'text-deep-green' : 'text-deep-green'}`}>
+            <span className="font-serif text-2xl font-bold tracking-tight leading-none text-deep-green">
               Meraki
             </span>
-            <span className={`font-sans text-[10px] tracking-[0.2em] font-medium uppercase mt-0.5 ${scrolled ? 'text-sage-green' : 'text-sage-green'}`}>
+            <span className="font-sans text-[10px] tracking-[0.2em] font-medium uppercase mt-0.5 text-sage-green">
               Yoga & Healing Studio
             </span>
           </Link>
@@ -90,7 +95,12 @@ const Navbar = () => {
 
           {/* Mobile Menu Button */}
           <div className="md:hidden">
-            <button onClick={() => setIsOpen(!isOpen)} className="text-gray-700 hover:text-sage-green">
+            <button 
+                type="button"
+                onClick={() => setIsOpen(!isOpen)} 
+                className="p-2 -mr-2 text-gray-700 hover:text-sage-green transition-colors focus:outline-none"
+                aria-label={isOpen ? "Close menu" : "Open menu"}
+            >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
@@ -99,23 +109,27 @@ const Navbar = () => {
 
       {/* Mobile Menu Overlay */}
       {isOpen && (
-        <div className="md:hidden bg-white absolute top-full left-0 w-full shadow-lg py-4 px-6 flex flex-col space-y-4">
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              to={link.path}
-              className="text-gray-700 hover:text-sage-green font-medium"
-            >
-              {link.name}
-            </Link>
-          ))}
-          <div className="border-t border-gray-100 pt-2 mt-2">
-            <Link 
-              to="/admin" 
-              className="flex items-center gap-2 text-gray-500 hover:text-deep-green font-medium text-sm"
-            >
-              <Lock size={14} /> Admin Login
-            </Link>
+        <div className="md:hidden bg-white absolute top-full left-0 w-full shadow-xl border-t border-gray-100 flex flex-col max-h-[calc(100vh-80px)] overflow-y-auto">
+          <div className="py-6 px-6 space-y-5">
+            {navLinks.map((link) => (
+                <Link
+                key={link.name}
+                to={link.path}
+                className={`block text-lg font-medium transition-colors ${
+                    location.pathname === link.path ? 'text-sage-green' : 'text-gray-800 hover:text-sage-green'
+                }`}
+                >
+                {link.name}
+                </Link>
+            ))}
+            <div className="border-t border-gray-100 pt-5 mt-2">
+                <Link 
+                to="/admin" 
+                className="flex items-center gap-2 text-gray-500 hover:text-deep-green font-medium text-base"
+                >
+                <Lock size={18} /> Admin Login
+                </Link>
+            </div>
           </div>
         </div>
       )}
