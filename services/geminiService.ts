@@ -2,13 +2,14 @@ import { GoogleGenAI, Type, Schema } from "@google/genai";
 import { AIRoutineResponse } from "../types";
 
 const apiKey = process.env.API_KEY || '';
-const ai = new GoogleGenAI({ apiKey });
 
 export const generateAsanaInfo = async (asanaName: string): Promise<string | null> => {
     if (!apiKey) {
         console.error("API Key missing");
         return null;
     }
+
+    const ai = new GoogleGenAI({ apiKey });
 
     const prompt = `
 ROLE:
@@ -130,6 +131,8 @@ export const generateYogaRoutine = async (goal: string, duration: string, level:
     return null;
   }
 
+  const ai = new GoogleGenAI({ apiKey });
+
   const prompt = `Create a yoga routine for a ${level} practitioner focusing on ${goal}. The routine should be approximately ${duration}.`;
 
   const schema: Schema = {
@@ -178,6 +181,8 @@ export const generateYogaRoutine = async (goal: string, duration: string, level:
 
 export const chatWithYogaAI = async (message: string): Promise<string> => {
   if (!apiKey) return "Please configure your API Key to use the AI assistant.";
+
+  const ai = new GoogleGenAI({ apiKey });
 
   try {
     const response = await ai.models.generateContent({
