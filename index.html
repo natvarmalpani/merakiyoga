@@ -9,32 +9,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <script>
-      /**
-       * Robust process shim for browser ESM.
-       * Preserves Netlify injected env variables and bridges naming differences.
-       */
       (function() {
-        const existingEnv = (window.process && window.process.env) || {};
-        
-        // Bridge GEMINI_API_KEY to API_KEY if needed
-        const apiKey = existingEnv.API_KEY || existingEnv.GEMINI_API_KEY || '';
-        
-        const shim = {
-          env: { 
-            NODE_ENV: 'production',
-            ...existingEnv,
-            API_KEY: apiKey
-          },
+        window.process = {
+          env: { NODE_ENV: 'production' },
           browser: true,
           version: '',
           nextTick: function(fn) { setTimeout(fn, 0); }
         };
-
-        window.process = shim;
         window.global = window;
-        if (typeof globalThis !== 'undefined') {
-          globalThis.process = shim;
-        }
       })();
       
       tailwind.config = {
