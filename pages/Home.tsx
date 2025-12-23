@@ -22,8 +22,8 @@ const Home = () => {
     fetchTestimonials();
   }, []);
 
-  // Standard Unsplash Yoga Image
-  const heroImageUrl = "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=2000&auto=format&fit=crop";
+  // Restored premium sanctuary background image
+  const heroImageUrl = "https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=2000&auto=format&fit=crop";
 
   return (
     <div className="overflow-x-hidden">
@@ -37,7 +37,7 @@ const Home = () => {
         }}
       >
         {/* Overlays for that premium airy aesthetic */}
-        <div className="absolute inset-0 bg-white/40 z-0"></div>
+        <div className="absolute inset-0 bg-white/30 z-0"></div>
         <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-transparent to-warm-white/100 z-0"></div>
         
         {/* Content Container - Higher z-index to ensure visibility */}
