@@ -141,7 +141,7 @@ const AdminLogin = () => {
               
               <div className="space-y-1">
                 <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider ml-1">Email Address</label>
-                <div className="relative group">
+                <div className="relative group text-left">
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-sage-green transition-colors" size={18} />
                   <input
                     type="email"
@@ -157,7 +157,7 @@ const AdminLogin = () => {
 
               <div className="space-y-1">
                 <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider ml-1">Password</label>
-                <div className="relative group">
+                <div className="relative group text-left">
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-sage-green transition-colors" size={18} />
                   <input
                     type={showPassword ? "text" : "password"}
@@ -216,7 +216,7 @@ const AdminLogin = () => {
             
             {!isSignUp && (
                 <div className="text-center mt-4">
-                <a href="mailto:support@meraki.com" className="text-xs text-gray-400 hover:text-sage-green transition-colors flex items-center justify-center gap-1">
+                <a href="mailto:meraki.yoga.healing@gmail.com" className="text-xs text-gray-400 hover:text-sage-green transition-colors flex items-center justify-center gap-1">
                     <HelpCircle size={12} /> Need help?
                 </a>
                 </div>

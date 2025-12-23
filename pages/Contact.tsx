@@ -84,7 +84,7 @@ const Contact = () => {
     }
   };
 
-  const mapLink = "https://www.google.com/maps/search/?api=1&query=BMR+Mall+No1%2F398+OMR+Navalur+Chennai+600130";
+  const mapLink = "https://www.google.com/maps/search/?api=1&query=BMR+Mall+No+1+/+398,+OMR,+Navalur,+Chennai+600130";
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">
@@ -106,7 +106,7 @@ const Contact = () => {
                             rel="noopener noreferrer"
                             className="text-gray-600 hover:text-sage-green transition-colors block"
                         >
-                            BMR Mall No1/398<br/>OMR, Navalur, Chennai 600130
+                            BMR Mall No 1 / 398,<br/>OMR, Navalur, Chennai 600130
                         </a>
                     </div>
                 </div>
@@ -116,7 +116,7 @@ const Contact = () => {
                     </div>
                     <div>
                         <h3 className="font-serif text-lg font-medium">Email Us</h3>
-                        <p className="text-gray-600">sunayanamundra@gmail.com</p>
+                        <a href="mailto:meraki.yoga.healing@gmail.com" className="text-gray-600 hover:text-sage-green transition-colors">meraki.yoga.healing@gmail.com</a>
                     </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -125,7 +125,7 @@ const Contact = () => {
                     </div>
                     <div>
                         <h3 className="font-serif text-lg font-medium">Call Us</h3>
-                        <p className="text-gray-600">+91 97699 11150</p>
+                        <a href="tel:+919769911150" className="text-gray-600 hover:text-sage-green transition-colors">+91 97699 11150</a>
                     </div>
                 </div>
             </div>
@@ -138,7 +138,7 @@ const Contact = () => {
                     loading="lazy"
                     allowFullScreen
                     referrerPolicy="no-referrer-when-downgrade"
-                    src="https://maps.google.com/maps?q=BMR%20Mall%20No1%2F398%20OMR%2C%20Navalur%2C%20Chennai%20600130&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                    src="https://maps.google.com/maps?q=BMR%20Mall%20No%201%20%2F%20398%2C%20OMR%2C%20Navalur%2C%20Chennai%20600130&t=&z=15&ie=UTF8&iwloc=&output=embed"
                     title="Meraki Yoga Studio Location"
                     className="w-full h-full object-cover"
                 ></iframe>
@@ -157,7 +157,7 @@ const Contact = () => {
                 </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4 text-left">
                 <div className="grid grid-cols-2 gap-4">
                     <div>
                         <label className="block text-xs font-medium text-gray-700 mb-1 uppercase tracking-wide">First Name <span className="text-red-500">*</span></label>

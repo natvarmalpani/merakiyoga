@@ -133,7 +133,7 @@ const Navbar = () => {
 
 const Footer = () => {
   const location = useLocation();
-  const mapLink = "https://www.google.com/maps/search/?api=1&query=BMR+Mall+No1%2F398+OMR+Navalur+Chennai+600130";
+  const mapLink = "https://www.google.com/maps/search/?api=1&query=BMR+Mall+No+1+/+398,+OMR,+Navalur,+Chennai+600130";
 
   if (location.pathname.startsWith('/admin/dashboard')) {
     return null;
@@ -142,68 +142,63 @@ const Footer = () => {
   return (
     <footer className="bg-sand-beige/30 pt-16 pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-          <div className="space-y-4">
-            <span className="font-serif text-2xl font-bold text-deep-green">Meraki</span>
-            <p className="text-gray-600 text-sm leading-relaxed">
-              Cultivating peace, strength, and flexibility in body and mind through ancient traditions and modern science.
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+          <div className="col-span-1 md:col-span-1">
+            <Link to="/" className="flex flex-col items-start">
+              <span className="font-serif text-2xl font-bold tracking-tight text-deep-green">Meraki</span>
+              <span className="font-sans text-[6px] tracking-[0.3em] font-bold uppercase mt-1 text-gray-500">YOGA & HEALING STUDIO</span>
+            </Link>
+            <p className="mt-4 text-sm text-gray-600 leading-relaxed">
+              Curating spaces for mindfulness, breathwork, and holistic physical wellness in the heart of Navalur.
             </p>
-            <div className="flex space-x-4">
-              <a href="https://www.instagram.com/meraki_yogaandhealing?igsh=bzh1Zm9hd3I1bGxo" target="_blank" rel="noopener noreferrer">
-                <Instagram className="text-gray-500 hover:text-sage-green cursor-pointer" size={20} />
-              </a>
-              <a href="https://www.facebook.com/share/19VnybP71Z/" target="_blank" rel="noopener noreferrer">
-                <Facebook className="text-gray-500 hover:text-sage-green cursor-pointer" size={20} />
-              </a>
-              <a href={mapLink} target="_blank" rel="noopener noreferrer" title="View on Google Maps">
-                <MapPin className="text-gray-500 hover:text-sage-green cursor-pointer" size={20} />
-              </a>
-            </div>
           </div>
-
+          
           <div>
-            <h3 className="font-serif font-bold text-gray-900 mb-4">Explore</h3>
-            <ul className="space-y-2 text-sm text-gray-600">
-              <li><Link to="/about" className="hover:text-sage-green">About Us</Link></li>
-              <li><Link to="/styles" className="hover:text-sage-green">Yoga Styles</Link></li>
-              <li><Link to="/pricing" className="hover:text-sage-green">Membership</Link></li>
-              <li><Link to="/blog" className="hover:text-sage-green">Wellness Blog</Link></li>
+            <h4 className="font-serif text-lg font-bold text-deep-green mb-6">Quick Links</h4>
+            <ul className="space-y-3">
+              <li><Link to="/styles" className="text-sm text-gray-600 hover:text-sage-green transition-colors">Yoga Styles</Link></li>
+              <li><Link to="/schedule" className="text-sm text-gray-600 hover:text-sage-green transition-colors">Class Schedule</Link></li>
+              <li><Link to="/pricing" className="text-sm text-gray-600 hover:text-sage-green transition-colors">Pricing</Link></li>
+              <li><Link to="/blog" className="text-sm text-gray-600 hover:text-sage-green transition-colors">Wellness Blog</Link></li>
             </ul>
           </div>
 
           <div>
-            <h3 className="font-serif font-bold text-gray-900 mb-4">Contact</h3>
-            <ul className="space-y-3 text-sm text-gray-600">
-              <li className="flex items-start space-x-2">
-                <MapPin size={16} className="mt-1 flex-shrink-0" />
-                <a href={mapLink} target="_blank" rel="noopener noreferrer" className="hover:text-sage-green transition-colors">
-                  <span>BMR Mall No1/398<br />OMR, Navalur, Chennai 600130</span>
+            <h4 className="font-serif text-lg font-bold text-deep-green mb-6">Contact</h4>
+            <ul className="space-y-4">
+              <li className="flex items-start gap-3">
+                <MapPin size={18} className="text-sage-green shrink-0 mt-0.5" />
+                <a href={mapLink} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-600 hover:text-sage-green transition-colors">
+                  BMR Mall No 1 / 398,<br/>OMR, Navalur, Chennai 600130
                 </a>
               </li>
-              <li className="flex items-center space-x-2">
-                <Phone size={16} />
-                <span>+91 97699 11150</span>
+              <li className="flex items-center gap-3">
+                <Mail size={18} className="text-sage-green shrink-0" />
+                <a href="mailto:meraki.yoga.healing@gmail.com" className="text-sm text-gray-600 hover:text-sage-green transition-colors">meraki.yoga.healing@gmail.com</a>
               </li>
-              <li className="flex items-center space-x-2">
-                <Mail size={16} />
-                <span>sunayanamundra@gmail.com</span>
+              <li className="flex items-center gap-3">
+                <Phone size={18} className="text-sage-green shrink-0" />
+                <a href="tel:+919769911150" className="text-sm text-gray-600 hover:text-sage-green transition-colors">+91 97699 11150</a>
               </li>
             </ul>
           </div>
 
           <div>
-            <h3 className="font-serif font-bold text-gray-900 mb-4">Newsletter</h3>
-            <p className="text-sm text-gray-600 mb-4">Subscribe for weekly wellness tips.</p>
-            <div className="flex">
-              <input type="email" placeholder="Your email" className="bg-white px-4 py-2 w-full text-sm outline-none border border-transparent focus:border-sage-green" />
-              <button className="bg-sage-green text-white px-4 py-2 hover:bg-deep-green transition-colors">
-                →
-              </button>
+            <h4 className="font-serif text-lg font-bold text-deep-green mb-6">Follow Us</h4>
+            <div className="flex items-center gap-4">
+              <a href="#" className="p-2 bg-white rounded-full text-deep-green hover:bg-sage-green hover:text-white transition-all shadow-sm"><Instagram size={20} /></a>
+              <a href="#" className="p-2 bg-white rounded-full text-deep-green hover:bg-sage-green hover:text-white transition-all shadow-sm"><Facebook size={20} /></a>
             </div>
+            <p className="mt-6 text-xs text-gray-400">Join our newsletter for weekly mindfulness tips.</p>
           </div>
         </div>
-        <div className="border-t border-gray-200 pt-8 text-center text-xs text-gray-500">
-          <p>© 2024 Meraki Yoga Studio. All rights reserved. | Privacy Policy | Terms of Service</p>
+        
+        <div className="mt-16 pt-8 border-t border-sand-beige border-opacity-50 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-xs text-gray-500">© {new Date().getFullYear()} Meraki Yoga & Healing Studio. All rights reserved.</p>
+          <div className="flex gap-6 text-xs text-gray-400">
+            <a href="#" className="hover:text-gray-600 transition-colors">Privacy Policy</a>
+            <a href="#" className="hover:text-gray-600 transition-colors">Terms of Service</a>
+          </div>
         </div>
       </div>
     </footer>
@@ -213,9 +208,9 @@ const Footer = () => {
 const App = () => {
   return (
     <Router>
-      <div className="min-h-screen flex flex-col font-sans text-gray-800 bg-warm-white">
+      <div className="flex flex-col min-h-screen">
         <Navbar />
-        <main className="flex-grow transition-all">
+        <main className="flex-grow pt-20">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
@@ -223,10 +218,10 @@ const App = () => {
             <Route path="/programs" element={<Programs />} />
             <Route path="/schedule" element={<Schedule />} />
             <Route path="/pricing" element={<Pricing />} />
+            <Route path="/knowledge-center" element={<KnowledgeCenter />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/contact" element={<Contact />} />
-            <Route path="/knowledge-center" element={<KnowledgeCenter />} />
             <Route path="/admin" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
           </Routes>
