@@ -1,4 +1,5 @@
 import { GoogleGenAI, Type } from "@google/genai";
+console.log("API_KEY exists:", !!process.env.API_KEY);
 
 export const handler = async (event: any) => {
   if (event.httpMethod !== "POST") {
