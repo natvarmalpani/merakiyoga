@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Mail, MapPin, Phone, Send, Loader2, AlertCircle } from 'lucide-react';
-import { useLocation } from '../services/dataService';
-import { createInquiry } from '../services/contactService';
+import { useLocation } from '../services/dataService.ts';
+import { createInquiry } from '../services/contactService.ts';
 
 const Contact = () => {
   const location = useLocation();
@@ -62,7 +62,7 @@ const Contact = () => {
         inquiry_type: inquiryHeading 
       });
 
-      // 2. Construct WhatsApp Message EXACTLY as requested
+      // 2. Construct WhatsApp Message
       const whatsappText = `${inquiryHeading}, ${formData.firstName} ${formData.lastName}, ${formData.phoneNumber}, ${formData.email}, ${formData.message}`;
       
       window.open(`https://wa.me/919769911150?text=${encodeURIComponent(whatsappText)}`, '_blank');
@@ -71,11 +71,9 @@ const Contact = () => {
       console.error("Database Error:", error.message);
       
       // Fallback: Open WhatsApp even if DB save fails
-      // We don't want to block the user if the backend isn't set up yet
       const whatsappText = `${inquiryHeading}, ${formData.firstName} ${formData.lastName}, ${formData.phoneNumber}, ${formData.email}, ${formData.message}`;
       window.open(`https://wa.me/919769911150?text=${encodeURIComponent(whatsappText)}`, '_blank');
 
-      // Only show error if it's NOT the RLS error, to avoid confusing users if admin hasn't run the script
       if (!error.message.includes('row-level security') && !error.message.includes('column')) {
          setSubmitError("Message sent via WhatsApp, but we had trouble saving a copy.");
       }
@@ -93,7 +91,7 @@ const Contact = () => {
             <h1 className="font-serif text-4xl text-deep-green mb-6">Get in Touch</h1>
             <p className="text-gray-600 mb-8">We'd love to hear from you. Visit our studio or send us a message.</p>
             
-            <div className="space-y-6">
+            <div className="space-y-6 text-left">
                 <div className="flex items-start gap-4">
                     <div className="bg-sage-green/10 p-3 rounded-full text-deep-green">
                         <MapPin size={24} />

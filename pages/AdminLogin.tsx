@@ -3,8 +3,8 @@ import { Eye, EyeOff, Lock, Mail, AlertTriangle, ArrowRight, CheckCircle, WifiOf
 // @ts-ignore - bypassing broken framer-motion types in this environment
 import { motion as framerMotion, AnimatePresence } from 'framer-motion';
 const motion = framerMotion as any;
-import { supabase } from '../services/supabaseClient';
-import { useNavigate } from '../services/dataService';
+import { supabase } from '../services/supabaseClient.ts';
+import { useNavigate } from '../services/dataService.ts';
 
 const AdminLogin = () => {
   const navigate = useNavigate();
@@ -83,7 +83,7 @@ const AdminLogin = () => {
             >
               {error.includes('connect') ? <WifiOff className="text-red-600 flex-shrink-0" size={20} /> : <AlertTriangle className="text-red-600 flex-shrink-0" size={20} />}
               <div className="flex-1">
-                 <p className="text-sm text-red-700 mt-0.5 leading-snug font-medium">{error}</p>
+                 <p className="text-sm text-red-700 mt-0.5 leading-snug font-medium text-left">{error}</p>
               </div>
             </motion.div>
           )}
@@ -96,7 +96,7 @@ const AdminLogin = () => {
               className="bg-green-50 border border-green-200 rounded-xl p-4 mb-4 flex items-start gap-3 shadow-sm"
             >
               <CheckCircle className="text-green-600 flex-shrink-0" size={20} />
-              <p className="text-sm text-green-700 mt-0.5">{successMessage}</p>
+              <p className="text-sm text-green-700 mt-0.5 text-left">{successMessage}</p>
             </motion.div>
           )}
         </AnimatePresence>
@@ -119,9 +119,9 @@ const AdminLogin = () => {
           <div className="p-8">
             <form onSubmit={handleSubmit} className="space-y-5">
               
-              <div className="space-y-1">
+              <div className="space-y-1 text-left">
                 <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider ml-1">Email Address</label>
-                <div className="relative group text-left">
+                <div className="relative group">
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-sage-green transition-colors" size={18} />
                   <input
                     type="email"
@@ -135,9 +135,9 @@ const AdminLogin = () => {
                 </div>
               </div>
 
-              <div className="space-y-1">
+              <div className="space-y-1 text-left">
                 <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider ml-1">Password</label>
-                <div className="relative group text-left">
+                <div className="relative group">
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-sage-green transition-colors" size={18} />
                   <input
                     type={showPassword ? "text" : "password"}
