@@ -1,6 +1,5 @@
-
-import { supabase } from './supabaseClient';
-import { YogaStyle } from '../types';
+import { supabase } from './supabaseClient.ts';
+import { YogaStyle } from '../types.ts';
 
 // Fetch all styles
 export const getStyles = async (): Promise<YogaStyle[]> => {

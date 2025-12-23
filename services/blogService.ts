@@ -1,6 +1,5 @@
-
-import { supabase } from './supabaseClient';
-import { BlogPost, BlogComment } from '../types';
+import { supabase } from './supabaseClient.ts';
+import { BlogPost, BlogComment } from '../types.ts';
 
 // --- POSTS ---
 
@@ -121,11 +120,6 @@ export const deleteBlogPost = async (id: number) => {
 };
 
 export const incrementBlogLikes = async (id: number) => {
-  // Using RPC is ideal, but for simplicity we fetch-increment-update or use a raw sql call if enabled.
-  // Standard Supabase allows increment via rpc if you set up a function, 
-  // but to avoid custom SQL functions for now, we will just fetch and update.
-  // NOTE: This is not race-condition safe for high traffic, but fine for this scale.
-  
   const { data: post, error: fetchError } = await supabase
     .from('blog_posts')
     .select('likes')

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, createContext } from 'react';
-import { YogaStyle, Asana, Course, ClassSession, PricingPlan, BlogPost } from '../types';
+import { YogaStyle, Asana, Course, ClassSession, PricingPlan, BlogPost } from '../types.ts';
 
 // --- MINIMAL ROUTER IMPLEMENTATION ---
 // Polyfill for missing react-router-dom in this environment

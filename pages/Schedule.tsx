@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { getSchedule } from '../services/scheduleService';
-import { ClassSession } from '../types';
+import { getSchedule } from '../services/scheduleService.ts';
+import { ClassSession } from '../types.ts';
 import { Calendar, Clock, MapPin, User, Loader2, Info } from 'lucide-react';
-import { useNavigate } from '../services/dataService';
+import { useNavigate } from '../services/dataService.ts';
 
 const Schedule = () => {
   const navigate = useNavigate();
@@ -73,13 +73,13 @@ const Schedule = () => {
             <p className="text-gray-500 mt-2">Check back soon for updates.</p>
         </div>
       ) : (
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden text-left">
             <div className="hidden md:grid grid-cols-6 gap-4 p-6 bg-sage-green/20 font-semibold text-deep-green">
                 <div className="col-span-1">Day</div>
                 <div className="col-span-1">Time</div>
                 <div className="col-span-2">Class</div>
                 <div className="col-span-1">Instructor</div>
-                <div className="col-span-1">Action</div>
+                <div className="col-span-1 text-center">Action</div>
             </div>
 
             <div className="divide-y divide-gray-100">

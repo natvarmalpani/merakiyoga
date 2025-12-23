@@ -1,15 +1,13 @@
-import { GoogleGenAI, Type, Schema } from "@google/genai";
-import { AIRoutineResponse } from "../types";
-
-const apiKey = process.env.API_KEY || '';
+import { GoogleGenAI, Type } from "@google/genai";
+import { AIRoutineResponse } from "../types.ts";
 
 export const generateAsanaInfo = async (asanaName: string): Promise<string | null> => {
-    if (!apiKey) {
+    if (!process.env.API_KEY) {
         console.error("API Key missing");
         return null;
     }
 
-    const ai = new GoogleGenAI({ apiKey });
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
     const prompt = `
 ROLE:
@@ -107,10 +105,9 @@ This content is for educational purposes only. Practice yoga under proper guidan
 
     try {
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-3-flash-preview',
             contents: prompt,
             config: {
-                // We request text/plain but the content within will be HTML formatted as per prompt
                 responseMimeType: "text/plain", 
                 systemInstruction: "You are a professional yoga education writer. Return ONLY clean HTML code. Do NOT wrap it in markdown code blocks."
             }
@@ -124,18 +121,17 @@ This content is for educational purposes only. Practice yoga under proper guidan
     }
 };
 
-// Deprecated or kept for reference if needed elsewhere
 export const generateYogaRoutine = async (goal: string, duration: string, level: string): Promise<AIRoutineResponse | null> => {
-  if (!apiKey) {
+  if (!process.env.API_KEY) {
     console.error("API Key missing");
     return null;
   }
 
-  const ai = new GoogleGenAI({ apiKey });
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
   const prompt = `Create a yoga routine for a ${level} practitioner focusing on ${goal}. The routine should be approximately ${duration}.`;
 
-  const schema: Schema = {
+  const schema = {
     type: Type.OBJECT,
     properties: {
       routineName: { type: Type.STRING },
@@ -158,7 +154,7 @@ export const generateYogaRoutine = async (goal: string, duration: string, level:
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3-flash-preview',
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -180,13 +176,13 @@ export const generateYogaRoutine = async (goal: string, duration: string, level:
 };
 
 export const chatWithYogaAI = async (message: string): Promise<string> => {
-  if (!apiKey) return "Please configure your API Key to use the AI assistant.";
+  if (!process.env.API_KEY) return "Please configure your API Key to use the AI assistant.";
 
-  const ai = new GoogleGenAI({ apiKey });
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3-flash-preview',
       contents: message,
       config: {
         systemInstruction: "You are a knowledgeable and peaceful yoga philosopher and instructor. Answer questions about yoga philosophy, history, asana benefits, and contraindications briefly and warmly."

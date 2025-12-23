@@ -1,6 +1,5 @@
-
-import { supabase } from './supabaseClient';
-import { ContactInquiry } from '../types';
+import { supabase } from './supabaseClient.ts';
+import { ContactInquiry } from '../types.ts';
 
 export const createInquiry = async (inquiry: Omit<ContactInquiry, 'id' | 'created_at'>) => {
   const { data, error } = await supabase

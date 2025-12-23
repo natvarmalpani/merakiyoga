@@ -9,15 +9,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <script>
-      // Polyfill process.env to prevent "Uncaught ReferenceError: process is not defined"
-      // This ensures the Google GenAI SDK (which expects process.env.API_KEY) doesn't crash the app on load.
-      window.process = {
-        env: {
-          API_KEY: '' 
-        }
-      };
-    </script>
-    <script>
+      // Defensive shim for process.env in browser
+      if (typeof window.process === 'undefined') {
+        window.process = { env: { API_KEY: '' } };
+      } else if (typeof window.process.env === 'undefined') {
+        window.process.env = { API_KEY: '' };
+      }
+      
       tailwind.config = {
         theme: {
           extend: {
@@ -40,6 +38,8 @@
       body {
         background-color: #F8F6F1;
         color: #1F2937;
+        margin: 0;
+        padding: 0;
       }
       .hide-scrollbar::-webkit-scrollbar {
         display: none;
@@ -66,6 +66,6 @@
 </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
+    <script type="module" src="index.tsx"></script>
   </body>
 </html>

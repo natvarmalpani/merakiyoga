@@ -1,6 +1,5 @@
-
-import { supabase } from './supabaseClient';
-import { ClassSession } from '../types';
+import { supabase } from './supabaseClient.ts';
+import { ClassSession } from '../types.ts';
 
 // Fetch all class sessions
 export const getSchedule = async (): Promise<ClassSession[]> => {

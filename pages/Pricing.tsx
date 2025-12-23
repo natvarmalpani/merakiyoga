@@ -1,7 +1,6 @@
-
 import React, { useEffect, useState } from 'react';
-import { getPricingPlans } from '../services/pricingService';
-import { PricingPlan } from '../types';
+import { getPricingPlans } from '../services/pricingService.ts';
+import { PricingPlan } from '../types.ts';
 import { Check, Loader2, Info } from 'lucide-react';
 
 const Pricing = () => {
@@ -30,6 +29,12 @@ const Pricing = () => {
     );
   }
 
+  // Helper to ensure the price has the rupee symbol without doubling it
+  const formatPrice = (price: string) => {
+    if (!price) return '₹0';
+    return price.startsWith('₹') ? price : `₹${price}`;
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="text-center mb-16">
@@ -48,7 +53,7 @@ const Pricing = () => {
             {plans.map((plan) => (
             <div 
                 key={plan.id} 
-                className={`relative bg-white rounded-2xl p-8 border ${plan.highlight ? 'border-sage-green shadow-xl scale-105 z-10' : 'border-gray-100 shadow-sm'} transition-all flex flex-col h-full`}
+                className={`relative bg-white rounded-2xl p-8 border ${plan.highlight ? 'border-sage-green shadow-xl scale-105 z-10' : 'border-gray-100 shadow-sm'} transition-all flex flex-col h-full text-left`}
             >
                 {plan.highlight && (
                     <span className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-sage-green text-white px-4 py-1 rounded-full text-xs font-semibold uppercase tracking-wider">
@@ -57,7 +62,7 @@ const Pricing = () => {
                 )}
                 <h3 className="font-serif text-2xl font-medium text-deep-green mb-2">{plan.name}</h3>
                 <div className="flex items-baseline gap-1 mb-6">
-                    <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
+                    <span className="text-4xl font-bold text-gray-900">{formatPrice(plan.price)}</span>
                     <span className="text-gray-500 text-sm">/{plan.period}</span>
                 </div>
                 

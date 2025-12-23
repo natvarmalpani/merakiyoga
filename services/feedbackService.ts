@@ -1,6 +1,5 @@
-
-import { supabase } from './supabaseClient';
-import { CustomerFeedback } from '../types';
+import { supabase } from './supabaseClient.ts';
+import { CustomerFeedback } from '../types.ts';
 
 export const getFeedback = async (): Promise<CustomerFeedback[]> => {
   const { data, error } = await supabase

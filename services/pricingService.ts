@@ -1,6 +1,5 @@
-
-import { supabase } from './supabaseClient';
-import { PricingPlan } from '../types';
+import { supabase } from './supabaseClient.ts';
+import { PricingPlan } from '../types.ts';
 
 export const getPricingPlans = async (): Promise<PricingPlan[]> => {
   const { data, error } = await supabase

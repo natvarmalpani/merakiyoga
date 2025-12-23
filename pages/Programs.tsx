@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { getPrograms } from '../services/programService';
-import { Course } from '../types';
+import { getPrograms } from '../services/programService.ts';
+import { Course } from '../types.ts';
 import { Clock, BarChart, Loader2, Info, Download, FileText, ArrowRight } from 'lucide-react';
-import { useNavigate } from '../services/dataService';
+import { useNavigate } from '../services/dataService.ts';
 
 const Programs = () => {
   const navigate = useNavigate();
@@ -56,7 +56,7 @@ const Programs = () => {
                 <p className="text-gray-500 mt-2">New courses are being crafted. Stay tuned!</p>
             </div>
         ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-left">
                 {courses.map(course => (
                     <div key={course.slug} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all border border-gray-100 flex flex-col h-full">
                         <div className="relative h-56 bg-gray-100">

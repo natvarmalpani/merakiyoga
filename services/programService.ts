@@ -1,6 +1,5 @@
-
-import { supabase } from './supabaseClient';
-import { Course } from '../types';
+import { supabase } from './supabaseClient.ts';
+import { Course } from '../types.ts';
 
 export const getPrograms = async (): Promise<Course[]> => {
   const { data, error } = await supabase

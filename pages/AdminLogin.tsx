@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Lock, Mail, AlertTriangle, ArrowRight, CheckCircle, WifiOff, HelpCircle, UserPlus } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+// @ts-ignore - bypassing broken framer-motion types in this environment
+import { motion as framerMotion, AnimatePresence } from 'framer-motion';
+const motion = framerMotion as any;
 import { supabase } from '../services/supabaseClient';
 import { useNavigate } from '../services/dataService';
 
