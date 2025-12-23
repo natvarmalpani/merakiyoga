@@ -11,14 +11,19 @@
     <script>
       /**
        * Robust process shim for browser ESM.
-       * Preserves existing environment variables while ensuring 'process' is available.
+       * Preserves Netlify injected env variables and bridges naming differences.
        */
       (function() {
         const existingEnv = (window.process && window.process.env) || {};
+        
+        // Bridge GEMINI_API_KEY to API_KEY if needed
+        const apiKey = existingEnv.API_KEY || existingEnv.GEMINI_API_KEY || '';
+        
         const shim = {
           env: { 
             NODE_ENV: 'production',
-            ...existingEnv
+            ...existingEnv,
+            API_KEY: apiKey
           },
           browser: true,
           version: '',

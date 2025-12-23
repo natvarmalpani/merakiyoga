@@ -1,14 +1,22 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { AIRoutineResponse } from "../types.ts";
 
-export const generateAsanaInfo = async (asanaName: string): Promise<string | null> => {
-    const apiKey = process.env.API_KEY;
-    if (!apiKey) {
-        console.error("Gemini API Key missing in process.env. Please ensure API_KEY is set in your environment.");
-        return null;
-    }
+/**
+ * Helper to get a fresh instance of the AI client.
+ * This ensures the latest API key from process.env is always used.
+ */
+const getAIClient = () => {
+  const apiKey = process.env.API_KEY;
+  if (!apiKey) {
+    console.error("Gemini API Key missing in process.env. Ensure API_KEY or GEMINI_API_KEY is set in Netlify.");
+    return null;
+  }
+  return new GoogleGenAI({ apiKey });
+};
 
-    const ai = new GoogleGenAI({ apiKey });
+export const generateAsanaInfo = async (asanaName: string): Promise<string | null> => {
+    const ai = getAIClient();
+    if (!ai) return null;
 
     const prompt = `
 ROLE:
@@ -123,13 +131,8 @@ This content is for educational purposes only. Practice yoga under proper guidan
 };
 
 export const generateYogaRoutine = async (goal: string, duration: string, level: string): Promise<AIRoutineResponse | null> => {
-  const apiKey = process.env.API_KEY;
-  if (!apiKey) {
-    console.error("Gemini API Key missing in process.env");
-    return null;
-  }
-
-  const ai = new GoogleGenAI({ apiKey });
+  const ai = getAIClient();
+  if (!ai) return null;
 
   const prompt = `Create a yoga routine for a ${level} practitioner focusing on ${goal}. The routine should be approximately ${duration}.`;
 
@@ -178,10 +181,8 @@ export const generateYogaRoutine = async (goal: string, duration: string, level:
 };
 
 export const chatWithYogaAI = async (message: string): Promise<string> => {
-  const apiKey = process.env.API_KEY;
-  if (!apiKey) return "Please configure your API Key to use the AI assistant.";
-
-  const ai = new GoogleGenAI({ apiKey });
+  const ai = getAIClient();
+  if (!ai) return "Please configure your API Key to use the AI assistant.";
 
   try {
     const response = await ai.models.generateContent({
