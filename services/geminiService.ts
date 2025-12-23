@@ -2,12 +2,13 @@ import { GoogleGenAI, Type } from "@google/genai";
 import { AIRoutineResponse } from "../types.ts";
 
 export const generateAsanaInfo = async (asanaName: string): Promise<string | null> => {
-    if (!process.env.API_KEY) {
-        console.error("API Key missing");
+    const apiKey = process.env.API_KEY;
+    if (!apiKey) {
+        console.error("Gemini API Key missing in process.env. Please ensure API_KEY is set in your environment.");
         return null;
     }
 
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = new GoogleGenAI({ apiKey });
 
     const prompt = `
 ROLE:
@@ -122,12 +123,13 @@ This content is for educational purposes only. Practice yoga under proper guidan
 };
 
 export const generateYogaRoutine = async (goal: string, duration: string, level: string): Promise<AIRoutineResponse | null> => {
-  if (!process.env.API_KEY) {
-    console.error("API Key missing");
+  const apiKey = process.env.API_KEY;
+  if (!apiKey) {
+    console.error("Gemini API Key missing in process.env");
     return null;
   }
 
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey });
 
   const prompt = `Create a yoga routine for a ${level} practitioner focusing on ${goal}. The routine should be approximately ${duration}.`;
 
@@ -176,9 +178,10 @@ export const generateYogaRoutine = async (goal: string, duration: string, level:
 };
 
 export const chatWithYogaAI = async (message: string): Promise<string> => {
-  if (!process.env.API_KEY) return "Please configure your API Key to use the AI assistant.";
+  const apiKey = process.env.API_KEY;
+  if (!apiKey) return "Please configure your API Key to use the AI assistant.";
 
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey });
 
   try {
     const response = await ai.models.generateContent({
