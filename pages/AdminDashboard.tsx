@@ -24,34 +24,18 @@ import {
   Loader2,
   Image as ImageIcon,
   Database,
-  Copy,
-  Check,
   Terminal,
-  MapPin,
-  User,
   MessageSquare,
-  IndianRupee,
   FileText,
   ChevronLeft,
   ChevronRight,
+  Upload,
   Star,
-  Quote,
-  Upload
+  Quote
 } from 'lucide-react';
 // @ts-ignore
 import { motion as framerMotion, AnimatePresence } from 'framer-motion';
 const motion = framerMotion as any;
-
-const SETUP_SQL = `-- Run this in Supabase SQL Editor to RESET and DISABLE RLS
-alter table if exists public.contact_inquiries disable row level security;
-alter table if exists public.courses disable row level security;
-alter table if exists public.blog_posts disable row level security;
-alter table if exists public.blog_comments disable row level security;
-alter table if exists public.pricing_plans disable row level security;
-alter table if exists public.yoga_styles disable row level security;
-alter table if exists public.class_sessions disable row level security;
-alter table if exists public.customer_feedback disable row level security;
-`;
 
 // Helper Components
 const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean; onClose: () => void; title: string; children?: React.ReactNode }) => {
@@ -77,21 +61,18 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean; onClose:
   );
 };
 
-const DashboardSection = ({ title, description, onAdd, children, extraHeaderAction, hideAddButton }: any) => (
+const DashboardSection = ({ title, description, onAdd, children, hideAddButton }: any) => (
   <div className="space-y-6">
     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
       <div className="px-1">
         <h2 className="font-serif text-2xl sm:text-3xl text-deep-green">{title}</h2>
         <p className="text-gray-500 text-sm mt-1">{description}</p>
       </div>
-      <div className="flex items-center gap-3 w-full sm:w-auto">
-        {extraHeaderAction}
-        {!hideAddButton && (
-            <button onClick={onAdd} className="flex-1 sm:flex-none bg-sage-green text-white px-4 py-2.5 rounded-lg font-medium hover:bg-deep-green transition-colors flex items-center justify-center gap-2 shadow-sm">
+      {!hideAddButton && (
+          <button onClick={onAdd} className="bg-sage-green text-white px-4 py-2.5 rounded-lg font-medium hover:bg-deep-green transition-colors flex items-center gap-2 shadow-sm w-full sm:w-auto justify-center">
             <Plus size={18} /> Add New
-            </button>
-        )}
-      </div>
+          </button>
+      )}
     </div>
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
       {children}
@@ -118,25 +99,12 @@ const TableWrapper = ({ children }: { children: React.ReactNode }) => (
 
 const Badge = ({ children, type }: { children?: React.ReactNode, type?: string }) => {
   let colorClass = "bg-gray-100 text-gray-600";
-  if (type === 'Beginner') colorClass = "bg-green-50 text-green-700 border border-green-100";
+  if (type === 'Beginner' || type === 'Beginners') colorClass = "bg-green-50 text-green-700 border border-green-100";
   else if (type === 'Intermediate') colorClass = "bg-yellow-50 text-yellow-700 border border-yellow-100";
   else if (type === 'Advanced') colorClass = "bg-orange-50 text-orange-700 border border-orange-100";
-  else if (type === 'published' || type === 'true') colorClass = "bg-blue-50 text-blue-700 border border-blue-100";
-  else if (type === 'draft' || type === 'false') colorClass = "bg-gray-100 text-gray-500 border border-gray-200";
-  
-  return <span className={`px-2.5 py-1 rounded-md text-[10px] sm:text-xs font-medium uppercase tracking-wider ${colorClass}`}>{children}</span>;
+  else if (type === 'true' || type === 'published') colorClass = "bg-blue-50 text-blue-700 border border-blue-100";
+  return <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${colorClass}`}>{children}</span>;
 };
-
-const ActionButtons = ({ onEdit, onDelete }: { onEdit: () => void, onDelete: () => void }) => (
-  <div className="flex items-center gap-1 sm:gap-2">
-    <button onClick={onEdit} className="p-1.5 text-gray-500 hover:text-sage-green hover:bg-sage-green/10 rounded-md transition-colors" title="Edit">
-      <Edit2 size={16} />
-    </button>
-    <button onClick={onDelete} className="p-1.5 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors" title="Delete">
-      <Trash2 size={16} />
-    </button>
-  </div>
-);
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -154,21 +122,17 @@ const AdminDashboard = () => {
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [feedback, setFeedback] = useState<CustomerFeedback[]>([]);
 
-  // Messages State
+  // Pagination
   const [messagePage, setMessagePage] = useState(1);
   const messagesPerPage = 10;
   
   // Modals
   const [modalType, setModalType] = useState<string | null>(null);
   const [editingItem, setEditingItem] = useState<any>(null);
-
-  // Form selections
+  const [formData, setFormData] = useState<any>({});
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [selectedPdf, setSelectedPdf] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-
-  // Consolidated Form Data
-  const [formData, setFormData] = useState<any>({});
 
   useEffect(() => {
     const init = async () => {
@@ -196,10 +160,7 @@ const AdminDashboard = () => {
 
   const handleFormChange = (e: any) => {
     const { name, value, type, checked } = e.target;
-    setFormData((prev: any) => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }));
+    setFormData((prev: any) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'image' | 'pdf') => {
@@ -213,15 +174,6 @@ const AdminDashboard = () => {
     }
   };
 
-  const closeModals = () => {
-    setModalType(null);
-    setEditingItem(null);
-    setFormData({});
-    setSelectedImage(null);
-    setSelectedPdf(null);
-    setImagePreview(null);
-  };
-
   const openModal = (type: string, item: any = null) => {
     setModalType(type);
     setEditingItem(item);
@@ -230,46 +182,52 @@ const AdminDashboard = () => {
       if (item.image) setImagePreview(item.image);
     } else {
       setFormData({});
+      setImagePreview(null);
     }
+    setSelectedImage(null);
+    setSelectedPdf(null);
   };
 
-  // CRUD Handlers
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
+      const payload = { ...formData };
+      if (payload.benefits && typeof payload.benefits === 'string') {
+        payload.benefits = payload.benefits.split(',').map((b: string) => b.trim()).filter(Boolean);
+      }
+
       if (modalType === 'styles') {
-        const payload = { ...formData, benefits: formData.benefits?.split(',').map((b: string) => b.trim()) || [] };
         if (editingItem) await updateStyle(editingItem.slug, payload, selectedImage);
         else await createStyle(payload, selectedImage);
       } else if (modalType === 'schedule') {
-        if (editingItem) await updateSession(editingItem.id, formData);
-        else await createSession(formData);
+        if (editingItem) await updateSession(editingItem.id, payload);
+        else await createSession(payload);
       } else if (modalType === 'programs') {
-        if (editingItem) await updateProgram(editingItem.slug, formData, selectedImage, selectedPdf);
-        else await createProgram(formData, selectedImage, selectedPdf);
+        if (editingItem) await updateProgram(editingItem.slug, payload, selectedImage, selectedPdf);
+        else await createProgram(payload, selectedImage, selectedPdf);
       } else if (modalType === 'pricing') {
-        const payload = { ...formData, benefits: formData.benefits?.split(',').map((b: string) => b.trim()) || [] };
         if (editingItem) await updatePricingPlan(editingItem.id, payload);
         else await createPricingPlan(payload);
       } else if (modalType === 'feedback') {
-        if (editingItem) await updateFeedback(editingItem.id, formData, selectedImage);
-        else await createFeedback(formData, selectedImage);
+        if (editingItem) await updateFeedback(editingItem.id, payload, selectedImage);
+        else await createFeedback(payload, selectedImage);
       } else if (modalType === 'blog') {
-        if (editingItem) await updateBlogPost(editingItem.id, formData, selectedImage);
-        else await createBlogPost(formData, selectedImage);
+        if (editingItem) await updateBlogPost(editingItem.id, payload, selectedImage);
+        else await createBlogPost(payload, selectedImage);
       }
+      
       await fetchAllData();
-      closeModals();
+      setModalType(null);
     } catch (err: any) {
-      alert(err.message || 'Operation failed');
+      alert(err.message || 'Save failed');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleDelete = async (type: string, item: any) => {
-    if (!window.confirm('Are you sure you want to delete this item?')) return;
+    if (!window.confirm('Delete this item?')) return;
     try {
       if (type === 'styles') await deleteStyle(item.slug, item.image);
       else if (type === 'schedule') await deleteSession(item.id);
@@ -285,45 +243,50 @@ const AdminDashboard = () => {
   };
 
   const renderTable = (type: string, data: any[]) => {
-    if (data.length === 0) return <EmptyState message={`No ${type} found.`} />;
+    if (data.length === 0) return <EmptyState message={`No ${type} entries.`} />;
     
     return (
       <TableWrapper>
         <table className="w-full text-left border-collapse">
-          <thead className="bg-gray-50/50 border-b border-gray-100 text-[10px] uppercase font-bold text-gray-500 tracking-widest">
+          <thead className="bg-gray-50 border-b border-gray-100 text-[10px] uppercase font-bold text-gray-400 tracking-widest">
             <tr>
-              <th className="px-6 py-4">Title/Name</th>
+              <th className="px-6 py-4">Name/Title</th>
               {type === 'styles' && <th className="px-6 py-4">Difficulty</th>}
-              {type === 'schedule' && <th className="px-6 py-4">Day/Time</th>}
-              {type === 'schedule' && <th className="px-6 py-4">Instructor</th>}
+              {type === 'schedule' && <th className="px-6 py-4">Time</th>}
               {type === 'programs' && <th className="px-6 py-4">Price</th>}
               {type === 'pricing' && <th className="px-6 py-4">Period</th>}
+              {type === 'feedback' && <th className="px-6 py-4">Rating</th>}
               {type === 'blog' && <th className="px-6 py-4">Status</th>}
-              <th className="px-6 py-4">Actions</th>
+              <th className="px-6 py-4 text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
             {data.map((item, i) => (
               <tr key={i} className="hover:bg-gray-50 transition-colors">
-                <td className="px-6 py-4 flex items-center gap-3 whitespace-nowrap">
-                  {(item.image || item.image === "") && (
-                    <div className="w-10 h-10 rounded-lg bg-gray-100 overflow-hidden shrink-0 shadow-sm">
-                      {item.image ? <img src={item.image} alt="" className="w-full h-full object-cover" /> : <ImageIcon size={16} className="m-auto mt-3 text-gray-300" />}
-                    </div>
-                  )}
-                  <div className="flex flex-col">
-                    <span className="font-medium text-gray-900">{item.name || item.title || item.classType}</span>
-                    {item.role && <span className="text-[10px] text-gray-400 font-bold uppercase">{item.role}</span>}
-                  </div>
+                <td className="px-6 py-4 whitespace-nowrap">
+                   <div className="flex items-center gap-3">
+                      {(item.image || item.image === "") && (
+                        <div className="w-8 h-8 rounded bg-gray-100 overflow-hidden shrink-0">
+                          {item.image ? <img src={item.image} className="w-full h-full object-cover" /> : <ImageIcon size={14} className="m-auto mt-2 text-gray-300"/>}
+                        </div>
+                      )}
+                      <div>
+                        <div className="font-medium text-gray-900">{item.name || item.title || item.classType}</div>
+                        {item.instructor && <div className="text-[10px] text-gray-400">{item.instructor}</div>}
+                      </div>
+                   </div>
                 </td>
                 {type === 'styles' && <td className="px-6 py-4"><Badge type={item.difficulty}>{item.difficulty}</Badge></td>}
-                {type === 'schedule' && <td className="px-6 py-4 text-xs text-gray-600 font-medium">{item.day} • {item.time}</td>}
-                {type === 'schedule' && <td className="px-6 py-4 text-sm text-gray-500">{item.instructor}</td>}
+                {type === 'schedule' && <td className="px-6 py-4 text-xs">{item.day} {item.time}</td>}
                 {type === 'programs' && <td className="px-6 py-4 font-bold text-deep-green">₹{item.price}</td>}
-                {type === 'pricing' && <td className="px-6 py-4 text-sm text-gray-400">{item.period}</td>}
-                {type === 'blog' && <td className="px-6 py-4"><Badge type={String(item.published)}>{item.published ? 'Published' : 'Draft'}</Badge></td>}
-                <td className="px-6 py-4">
-                  <ActionButtons onEdit={() => openModal(type, item)} onDelete={() => handleDelete(type, item)} />
+                {type === 'pricing' && <td className="px-6 py-4 text-gray-500 text-xs">{item.period}</td>}
+                {type === 'feedback' && <td className="px-6 py-4 text-yellow-500"><Star size={14} fill="currentColor" className="inline mr-1"/>{item.rating}</td>}
+                {type === 'blog' && <td className="px-6 py-4"><Badge type={item.published ? 'published' : 'draft'}>{item.published ? 'Published' : 'Draft'}</Badge></td>}
+                <td className="px-6 py-4 text-right">
+                  <div className="flex justify-end gap-2">
+                    <button onClick={() => openModal(type, item)} className="p-1.5 text-gray-400 hover:text-sage-green"><Edit2 size={16} /></button>
+                    <button onClick={() => handleDelete(type, item)} className="p-1.5 text-gray-400 hover:text-red-500"><Trash2 size={16} /></button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -335,67 +298,27 @@ const AdminDashboard = () => {
 
   const renderContent = () => {
     switch (activeTab) {
-      case 'styles':
-        return (
-          <DashboardSection title="Yoga Styles" description="Manage studio class types." onAdd={() => openModal('styles')}>
-            {renderTable('styles', styles)}
-          </DashboardSection>
-        );
-      case 'schedule':
-        return (
-          <DashboardSection title="Class Schedule" description="Manage weekly timetable." onAdd={() => openModal('schedule')}>
-            {renderTable('schedule', scheduleData)}
-          </DashboardSection>
-        );
-      case 'programs':
-        return (
-          <DashboardSection title="Curated Programs" description="Manage specialized courses." onAdd={() => openModal('programs')}>
-            {renderTable('programs', programs)}
-          </DashboardSection>
-        );
-      case 'pricing':
-        return (
-          <DashboardSection title="Membership Plans" description="Manage subscription tiers." onAdd={() => openModal('pricing')}>
-            {renderTable('pricing', pricingPlansData)}
-          </DashboardSection>
-        );
-      case 'feedback':
-        return (
-          <DashboardSection title="Testimonials" description="Manage student feedback." onAdd={() => openModal('feedback')}>
-            {renderTable('feedback', feedback)}
-          </DashboardSection>
-        );
-      case 'blog':
-        return (
-          <DashboardSection title="Wellness Blog" description="Manage journal entries." onAdd={() => openModal('blog')}>
-            {renderTable('blog', blogPosts)}
-          </DashboardSection>
-        );
-      case 'messages':
-        const currentMessages = inquiries.slice((messagePage-1)*messagesPerPage, messagePage*messagesPerPage);
-        return (
-          <DashboardSection title="Contact Inquiries" description="Manage customer messages." hideAddButton={true}>
-            {renderTable('inquiry', currentMessages)}
-          </DashboardSection>
-        );
-      default:
-        return <EmptyState message="Section missing." />;
+      case 'styles': return <DashboardSection title="Yoga Styles" description="Manage studio class types." onAdd={() => openModal('styles')}>{renderTable('styles', styles)}</DashboardSection>;
+      case 'schedule': return <DashboardSection title="Schedule" description="Manage class timetable." onAdd={() => openModal('schedule')}>{renderTable('schedule', scheduleData)}</DashboardSection>;
+      case 'programs': return <DashboardSection title="Programs" description="Manage curated courses." onAdd={() => openModal('programs')}>{renderTable('programs', programs)}</DashboardSection>;
+      case 'pricing': return <DashboardSection title="Pricing" description="Manage membership tiers." onAdd={() => openModal('pricing')}>{renderTable('pricing', pricingPlansData)}</DashboardSection>;
+      case 'feedback': return <DashboardSection title="Feedback" description="Manage student testimonials." onAdd={() => openModal('feedback')}>{renderTable('feedback', feedback)}</DashboardSection>;
+      case 'blog': return <DashboardSection title="Blog" description="Manage wellness articles." onAdd={() => openModal('blog')}>{renderTable('blog', blogPosts)}</DashboardSection>;
+      case 'messages': 
+        const currentMsgs = inquiries.slice((messagePage-1)*messagesPerPage, messagePage*messagesPerPage);
+        return <DashboardSection title="Inquiries" description="Client messages." hideAddButton>{renderTable('inquiry', currentMsgs)}</DashboardSection>;
+      default: return <EmptyState message="Section missing." />;
     }
   };
 
   if (isLoading) return <div className="min-h-screen bg-gray-50 flex items-center justify-center"><Loader2 className="animate-spin text-sage-green" size={48} /></div>;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex font-sans">
-      {/* Sidebar - Desktop Only */}
-      <aside className="hidden lg:flex flex-col w-64 bg-deep-green text-white fixed top-0 left-0 h-screen z-[60] shadow-2xl">
-        <div className="p-8 border-b border-white/5">
-          <Link to="/" className="flex flex-col items-start group">
-            <span className="font-serif text-2xl font-bold tracking-tight text-white leading-none">Meraki</span>
-            <span className="font-sans text-[7px] tracking-[0.4em] font-bold uppercase mt-1 text-sage-green/60">ADMIN STUDIO</span>
-          </Link>
-        </div>
-        <nav className="flex-1 py-8 px-4 space-y-2 overflow-y-auto">
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Sidebar */}
+      <aside className="hidden lg:flex flex-col w-64 bg-deep-green text-white fixed h-full z-[60]">
+        <div className="p-8 border-b border-white/5"><Link to="/" className="font-serif text-2xl font-bold">Meraki</Link></div>
+        <nav className="flex-1 py-6 px-4 space-y-1">
           {[
             { id: 'styles', label: 'Styles', icon: <Leaf size={20} /> },
             { id: 'schedule', label: 'Schedule', icon: <Calendar size={20} /> },
@@ -404,141 +327,97 @@ const AdminDashboard = () => {
             { id: 'messages', label: 'Messages', icon: <MessageSquare size={20} /> },
             { id: 'feedback', label: 'Feedback', icon: <Quote size={20} /> },
             { id: 'blog', label: 'Blog', icon: <PenTool size={20} /> },
-          ].map((item) => (
-            <button key={item.id} onClick={() => setActiveTab(item.id)} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${activeTab === item.id ? 'bg-sage-green text-deep-green shadow-lg' : 'text-gray-400 hover:text-white'}`}>
+          ].map(item => (
+            <button key={item.id} onClick={() => setActiveTab(item.id)} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${activeTab === item.id ? 'bg-sage-green text-deep-green font-bold' : 'text-gray-400 hover:text-white'}`}>
               {item.icon} {item.label}
             </button>
           ))}
         </nav>
-        <div className="p-4 border-t border-white/5"><button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-300 hover:text-red-200"><LogOut size={18} /> Sign Out</button></div>
+        <div className="p-4 border-t border-white/5"><button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-300"><LogOut size={18} /> Sign Out</button></div>
       </aside>
 
-      {/* Mobile Top Header */}
-      <div className="lg:hidden fixed w-full bg-deep-green text-white z-[60] flex justify-between items-center px-4 py-4 shadow-xl">
-        <Link to="/" className="flex flex-col"><span className="font-serif text-xl font-bold">Meraki</span><span className="text-[6px] tracking-[0.3em] font-bold text-sage-green/60 uppercase">Admin</span></Link>
-        <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2"><Menu size={24} /></button>
-      </div>
-
-      {/* Mobile Drawer */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-            <motion.div initial={{ x: -300 }} animate={{ x: 0 }} exit={{ x: -300 }} className="lg:hidden fixed inset-y-0 left-0 w-[280px] bg-deep-green text-white z-[80] shadow-2xl flex flex-col p-6">
-                <div className="flex justify-between items-center mb-8"><span className="font-serif text-2xl font-bold">Menu</span><button onClick={() => setIsMobileMenuOpen(false)}><X size={24} /></button></div>
-                <nav className="flex-1 space-y-2">
-                    {['styles', 'schedule', 'programs', 'pricing', 'messages', 'feedback', 'blog'].map((id) => (
-                        <button key={id} onClick={() => { setActiveTab(id); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-4 px-4 py-4 rounded-xl text-base font-medium ${activeTab === id ? 'bg-sage-green text-deep-green' : 'text-gray-400'}`}>
-                           {id.charAt(0).toUpperCase() + id.slice(1)}
-                        </button>
-                    ))}
-                </nav>
-            </motion.div>
-        )}
-      </AnimatePresence>
-
-      <main className="flex-1 lg:ml-64 p-4 md:p-8 lg:p-12 pt-24 lg:pt-12 min-h-screen w-full overflow-x-hidden">
-        <div className="max-w-6xl mx-auto">
-            {renderContent()}
-        </div>
+      <main className="flex-1 lg:ml-64 p-4 md:p-8 pt-24 lg:pt-8 min-h-screen">
+        <div className="max-w-6xl mx-auto">{renderContent()}</div>
       </main>
 
-      {/* Universal Modal Content */}
-      <Modal isOpen={!!modalType} onClose={closeModals} title={`${editingItem ? 'Edit' : 'Add New'} ${modalType}`}>
-        <form onSubmit={handleSave} className="space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                {modalType === 'styles' && (
-                    <>
-                        <div className="sm:col-span-2"><label className="text-xs font-bold text-gray-400 uppercase">Style Name</label><input type="text" name="name" value={formData.name || ''} onChange={handleFormChange} className="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none" required /></div>
-                        <div className="sm:col-span-2"><label className="text-xs font-bold text-gray-400 uppercase">Description</label><textarea name="description" value={formData.description || ''} onChange={handleFormChange} className="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none" rows={3} required /></div>
-                        <div><label className="text-xs font-bold text-gray-400 uppercase">Difficulty</label><select name="difficulty" value={formData.difficulty || 'Beginner'} onChange={handleFormChange} className="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none"><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select></div>
-                        <div><label className="text-xs font-bold text-gray-400 uppercase">Duration</label><input type="text" name="duration" value={formData.duration || ''} onChange={handleFormChange} className="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none" placeholder="e.g. 60 min" /></div>
-                        <div className="sm:col-span-2"><label className="text-xs font-bold text-gray-400 uppercase">Benefits (comma separated)</label><input type="text" name="benefits" value={formData.benefits || ''} onChange={handleFormChange} className="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none" /></div>
-                    </>
-                )}
+      <Modal isOpen={!!modalType} onClose={() => setModalType(null)} title={`${editingItem ? 'Edit' : 'Add'} ${modalType}`}>
+        <form onSubmit={handleSave} className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+             {/* Dynamic Form Fields */}
+             {modalType === 'styles' && (
+                <>
+                  <div className="sm:col-span-2"><label className="text-[10px] font-bold text-gray-400 uppercase">Name</label><input name="name" value={formData.name || ''} onChange={handleFormChange} className="w-full p-3 bg-gray-50 border rounded-lg outline-none" required /></div>
+                  <div className="sm:col-span-2"><label className="text-[10px] font-bold text-gray-400 uppercase">Description</label><textarea name="description" value={formData.description || ''} onChange={handleFormChange} className="w-full p-3 bg-gray-50 border rounded-lg outline-none" rows={3} required /></div>
+                  <div><label className="text-[10px] font-bold text-gray-400 uppercase">Difficulty</label><select name="difficulty" value={formData.difficulty || 'Beginner'} onChange={handleFormChange} className="w-full p-3 bg-gray-50 border rounded-lg outline-none"><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select></div>
+                  <div><label className="text-[10px] font-bold text-gray-400 uppercase">Duration</label><input name="duration" value={formData.duration || ''} onChange={handleFormChange} className="w-full p-3 bg-gray-50 border rounded-lg outline-none" /></div>
+                  <div className="sm:col-span-2"><label className="text-[10px] font-bold text-gray-400 uppercase">Benefits (comma separated)</label><input name="benefits" value={formData.benefits || ''} onChange={handleFormChange} className="w-full p-3 bg-gray-50 border rounded-lg outline-none" /></div>
+                </>
+             )}
 
-                {modalType === 'schedule' && (
-                    <>
-                        <div><label className="text-xs font-bold text-gray-400 uppercase">Day</label><select name="day" value={formData.day || 'Monday'} onChange={handleFormChange} className="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none"><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option></select></div>
-                        <div><label className="text-xs font-bold text-gray-400 uppercase">Time</label><input type="text" name="time" value={formData.time || ''} onChange={handleFormChange} className="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none" placeholder="e.g. 07:00 AM" required /></div>
-                        <div><label className="text-xs font-bold text-gray-400 uppercase">Class Type</label><input type="text" name="classType" value={formData.classType || ''} onChange={handleFormChange} className="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none" required /></div>
-                        <div><label className="text-xs font-bold text-gray-400 uppercase">Instructor</label><input type="text" name="instructor" value={formData.instructor || ''} onChange={handleFormChange} className="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none" required /></div>
-                        <div><label className="text-xs font-bold text-gray-400 uppercase">Location</label><input type="text" name="location" value={formData.location || ''} onChange={handleFormChange} className="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none" /></div>
-                        <div><label className="text-xs font-bold text-gray-400 uppercase">Level</label><input type="text" name="level" value={formData.level || 'All Levels'} onChange={handleFormChange} className="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none" /></div>
-                    </>
-                )}
+             {modalType === 'schedule' && (
+                <>
+                  <div><label className="text-[10px] font-bold text-gray-400 uppercase">Day</label><select name="day" value={formData.day || 'Monday'} onChange={handleFormChange} className="w-full p-3 bg-gray-50 border rounded-lg outline-none"><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option></select></div>
+                  <div><label className="text-[10px] font-bold text-gray-400 uppercase">Time</label><input name="time" value={formData.time || ''} onChange={handleFormChange} className="w-full p-3 bg-gray-50 border rounded-lg outline-none" placeholder="07:00 AM" required /></div>
+                  <div><label className="text-[10px] font-bold text-gray-400 uppercase">Class Type</label><input name="classType" value={formData.classType || ''} onChange={handleFormChange} className="w-full p-3 bg-gray-50 border rounded-lg outline-none" required /></div>
+                  <div><label className="text-[10px] font-bold text-gray-400 uppercase">Instructor</label><input name="instructor" value={formData.instructor || ''} onChange={handleFormChange} className="w-full p-3 bg-gray-50 border rounded-lg outline-none" required /></div>
+                </>
+             )}
 
-                {modalType === 'programs' && (
-                    <>
-                        <div className="sm:col-span-2"><label className="text-xs font-bold text-gray-400 uppercase">Program Title</label><input type="text" name="title" value={formData.title || ''} onChange={handleFormChange} className="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none" required /></div>
-                        <div className="sm:col-span-2"><label className="text-xs font-bold text-gray-400 uppercase">Description</label><textarea name="description" value={formData.description || ''} onChange={handleFormChange} className="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none" rows={2} required /></div>
-                        <div><label className="text-xs font-bold text-gray-400 uppercase">Price (₹)</label><input type="number" name="price" value={formData.price || ''} onChange={handleFormChange} className="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none" required /></div>
-                        <div><label className="text-xs font-bold text-gray-400 uppercase">Level</label><input type="text" name="level" value={formData.level || ''} onChange={handleFormChange} className="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none" /></div>
-                        <div><label className="text-xs font-bold text-gray-400 uppercase">Duration</label><input type="text" name="duration" value={formData.duration || ''} onChange={handleFormChange} className="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none" /></div>
-                        <div><label className="text-xs font-bold text-gray-400 uppercase">Badge (Optional)</label><input type="text" name="badge" value={formData.badge || ''} onChange={handleFormChange} className="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none" /></div>
-                        <div className="sm:col-span-2">
-                          <label className="text-xs font-bold text-gray-400 uppercase">Brochure PDF</label>
-                          <input type="file" accept="application/pdf" onChange={(e) => handleFileChange(e, 'pdf')} className="hidden" id="pdf-upload" />
-                          <label htmlFor="pdf-upload" className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gray-50 border-2 border-dashed rounded-xl cursor-pointer hover:bg-gray-100">
-                             <FileText size={18} /> {selectedPdf ? selectedPdf.name : (formData.pdf_url ? 'PDF Attached' : 'Upload PDF')}
-                          </label>
-                        </div>
-                    </>
-                )}
+             {modalType === 'programs' && (
+                <>
+                  <div className="sm:col-span-2"><label className="text-[10px] font-bold text-gray-400 uppercase">Title</label><input name="title" value={formData.title || ''} onChange={handleFormChange} className="w-full p-3 bg-gray-50 border rounded-lg outline-none" required /></div>
+                  <div><label className="text-[10px] font-bold text-gray-400 uppercase">Price (₹)</label><input type="number" name="price" value={formData.price || ''} onChange={handleFormChange} className="w-full p-3 bg-gray-50 border rounded-lg outline-none" required /></div>
+                  <div><label className="text-[10px] font-bold text-gray-400 uppercase">Duration</label><input name="duration" value={formData.duration || ''} onChange={handleFormChange} className="w-full p-3 bg-gray-50 border rounded-lg outline-none" /></div>
+                  <div className="sm:col-span-2"><label className="text-[10px] font-bold text-gray-400 uppercase">Description</label><textarea name="description" value={formData.description || ''} onChange={handleFormChange} className="w-full p-3 bg-gray-50 border rounded-lg outline-none" rows={2} required /></div>
+                  <div className="sm:col-span-2"><label className="text-[10px] font-bold text-gray-400 uppercase">Brochure PDF</label><input type="file" accept="application/pdf" onChange={e => handleFileChange(e, 'pdf')} className="w-full text-xs" /></div>
+                </>
+             )}
 
-                {modalType === 'pricing' && (
-                    <>
-                        <div className="sm:col-span-2"><label className="text-xs font-bold text-gray-400 uppercase">Plan Name</label><input type="text" name="name" value={formData.name || ''} onChange={handleFormChange} className="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none" required /></div>
-                        <div><label className="text-xs font-bold text-gray-400 uppercase">Price</label><input type="text" name="price" value={formData.price || ''} onChange={handleFormChange} className="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none" required /></div>
-                        <div><label className="text-xs font-bold text-gray-400 uppercase">Period</label><input type="text" name="period" value={formData.period || ''} onChange={handleFormChange} className="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none" placeholder="e.g. per month" required /></div>
-                        <div className="sm:col-span-2"><label className="text-xs font-bold text-gray-400 uppercase">Benefits (comma separated)</label><textarea name="benefits" value={formData.benefits || ''} onChange={handleFormChange} className="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none" rows={2} /></div>
-                        <div className="flex items-center gap-3"><input type="checkbox" name="highlight" checked={formData.highlight || false} onChange={handleFormChange} id="highlight" /><label htmlFor="highlight" className="text-sm text-gray-600">Highlight as Best Value</label></div>
-                    </>
-                )}
+             {modalType === 'pricing' && (
+                <>
+                  <div className="sm:col-span-2"><label className="text-[10px] font-bold text-gray-400 uppercase">Plan Name</label><input name="name" value={formData.name || ''} onChange={handleFormChange} className="w-full p-3 bg-gray-50 border rounded-lg outline-none" required /></div>
+                  <div><label className="text-[10px] font-bold text-gray-400 uppercase">Price</label><input name="price" value={formData.price || ''} onChange={handleFormChange} className="w-full p-3 bg-gray-50 border rounded-lg outline-none" required /></div>
+                  <div><label className="text-[10px] font-bold text-gray-400 uppercase">Period</label><input name="period" value={formData.period || ''} onChange={handleFormChange} className="w-full p-3 bg-gray-50 border rounded-lg outline-none" placeholder="per month" /></div>
+                  <div className="sm:col-span-2 flex items-center gap-2"><input type="checkbox" name="highlight" checked={formData.highlight || false} onChange={handleFormChange} id="highlight"/><label htmlFor="highlight" className="text-sm">Highlight as Best Value</label></div>
+                </>
+             )}
 
-                {modalType === 'feedback' && (
-                    <>
-                        <div className="sm:col-span-2"><label className="text-xs font-bold text-gray-400 uppercase">Student Name</label><input type="text" name="name" value={formData.name || ''} onChange={handleFormChange} className="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none" required /></div>
-                        <div><label className="text-xs font-bold text-gray-400 uppercase">Role/Subtitle</label><input type="text" name="role" value={formData.role || ''} onChange={handleFormChange} className="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none" placeholder="e.g. Member since 2021" /></div>
-                        <div><label className="text-xs font-bold text-gray-400 uppercase">Rating (1-5)</label><input type="number" name="rating" min="1" max="5" value={formData.rating || 5} onChange={handleFormChange} className="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none" /></div>
-                        <div className="sm:col-span-2"><label className="text-xs font-bold text-gray-400 uppercase">Quote</label><textarea name="quote" value={formData.quote || ''} onChange={handleFormChange} className="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none" rows={3} required /></div>
-                    </>
-                )}
+             {modalType === 'feedback' && (
+                <>
+                  <div className="sm:col-span-2"><label className="text-[10px] font-bold text-gray-400 uppercase">Student Name</label><input name="name" value={formData.name || ''} onChange={handleFormChange} className="w-full p-3 bg-gray-50 border rounded-lg outline-none" required /></div>
+                  <div><label className="text-[10px] font-bold text-gray-400 uppercase">Rating (1-5)</label><input type="number" name="rating" value={formData.rating || 5} min="1" max="5" onChange={handleFormChange} className="w-full p-3 bg-gray-50 border rounded-lg outline-none" required /></div>
+                  <div className="sm:col-span-2"><label className="text-[10px] font-bold text-gray-400 uppercase">Quote</label><textarea name="quote" value={formData.quote || ''} onChange={handleFormChange} className="w-full p-3 bg-gray-50 border rounded-lg outline-none" rows={3} required /></div>
+                </>
+             )}
 
-                {modalType === 'blog' && (
-                    <>
-                        <div className="sm:col-span-2"><label className="text-xs font-bold text-gray-400 uppercase">Post Title</label><input type="text" name="title" value={formData.title || ''} onChange={handleFormChange} className="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none" required /></div>
-                        <div><label className="text-xs font-bold text-gray-400 uppercase">Slug</label><input type="text" name="slug" value={formData.slug || ''} onChange={handleFormChange} className="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none" placeholder="auto-generated-if-empty" /></div>
-                        <div><label className="text-xs font-bold text-gray-400 uppercase">Category</label><input type="text" name="category" value={formData.category || 'Wellness'} onChange={handleFormChange} className="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none" /></div>
-                        <div className="sm:col-span-2"><label className="text-xs font-bold text-gray-400 uppercase">Excerpt</label><textarea name="excerpt" value={formData.excerpt || ''} onChange={handleFormChange} className="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none" rows={2} /></div>
-                        <div className="sm:col-span-2"><label className="text-xs font-bold text-gray-400 uppercase">Content</label><textarea name="content" value={formData.content || ''} onChange={handleFormChange} className="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none font-mono text-sm" rows={6} required /></div>
-                        <div className="flex items-center gap-3"><input type="checkbox" name="published" checked={formData.published || false} onChange={handleFormChange} id="published" /><label htmlFor="published" className="text-sm text-gray-600">Publish Immediately</label></div>
-                    </>
-                )}
+             {modalType === 'blog' && (
+                <>
+                  <div className="sm:col-span-2"><label className="text-[10px] font-bold text-gray-400 uppercase">Post Title</label><input name="title" value={formData.title || ''} onChange={handleFormChange} className="w-full p-3 bg-gray-50 border rounded-lg outline-none" required /></div>
+                  <div className="sm:col-span-2"><label className="text-[10px] font-bold text-gray-400 uppercase">Excerpt</label><textarea name="excerpt" value={formData.excerpt || ''} onChange={handleFormChange} className="w-full p-3 bg-gray-50 border rounded-lg outline-none" rows={2} required /></div>
+                  <div className="sm:col-span-2"><label className="text-[10px] font-bold text-gray-400 uppercase">Content (Markdown supported)</label><textarea name="content" value={formData.content || ''} onChange={handleFormChange} className="w-full p-3 bg-gray-50 border rounded-lg outline-none font-mono text-xs" rows={6} required /></div>
+                  <div className="flex items-center gap-2"><input type="checkbox" name="published" checked={formData.published || false} onChange={handleFormChange} id="published"/><label htmlFor="published" className="text-sm">Published</label></div>
+                </>
+             )}
 
-                {/* Shared Image Upload UI */}
-                {['styles', 'programs', 'feedback', 'blog'].includes(modalType as string) && (
-                  <div className="sm:col-span-2">
-                    <label className="text-xs font-bold text-gray-400 uppercase">Cover Image</label>
-                    <div className="mt-2 flex items-center gap-4">
-                      <div className="w-20 h-20 rounded-xl bg-gray-50 border overflow-hidden shrink-0 flex items-center justify-center">
-                        {imagePreview ? <img src={imagePreview} className="w-full h-full object-cover" /> : <ImageIcon className="text-gray-300" />}
-                      </div>
-                      <div className="flex-1">
-                        <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, 'image')} className="hidden" id="img-upload" />
-                        <label htmlFor="img-upload" className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white border rounded-xl cursor-pointer hover:bg-gray-50 transition-colors">
-                          <Upload size={18} /> Select New Image
-                        </label>
-                      </div>
+             {/* Shared Image Section */}
+             {['styles', 'programs', 'feedback', 'blog'].includes(modalType!) && (
+                <div className="sm:col-span-2 border-t pt-4">
+                  <label className="text-[10px] font-bold text-gray-400 uppercase block mb-2">Cover Image</label>
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 rounded bg-gray-100 overflow-hidden flex items-center justify-center">
+                      {imagePreview ? <img src={imagePreview} className="w-full h-full object-cover" /> : <Upload className="text-gray-300" />}
                     </div>
+                    <input type="file" accept="image/*" onChange={e => handleFileChange(e, 'image')} className="text-xs" />
                   </div>
-                )}
-            </div>
-
-            <div className="pt-4 border-t border-gray-100 flex justify-end gap-3">
-                <button type="button" onClick={closeModals} className="px-6 py-2.5 text-sm font-medium text-gray-500 hover:text-gray-700">Cancel</button>
-                <button type="submit" disabled={isSubmitting} className="px-8 py-2.5 bg-deep-green text-white rounded-xl font-medium hover:bg-opacity-90 transition-all flex items-center gap-2">
-                    {isSubmitting ? <Loader2 className="animate-spin" size={18} /> : (editingItem ? 'Update' : 'Create')}
-                </button>
-            </div>
+                </div>
+             )}
+          </div>
+          <div className="flex justify-end gap-3 pt-4 border-t">
+            <button type="button" onClick={() => setModalType(null)} className="px-6 py-2 text-sm text-gray-500">Cancel</button>
+            <button type="submit" disabled={isSubmitting} className="bg-deep-green text-white px-8 py-2 rounded-xl font-medium flex items-center gap-2">
+              {isSubmitting ? <Loader2 className="animate-spin" size={18}/> : 'Save Changes'}
+            </button>
+          </div>
         </form>
       </Modal>
     </div>
