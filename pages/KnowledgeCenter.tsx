@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { generateAsanaInfo } from '../services/geminiService';
-import { ASANA_LIST } from '../services/asanaList';
+import { generateAsanaInfo } from '../services/geminiService.ts';
+import { ASANA_LIST } from '../services/asanaList.ts';
 import { Sparkles, Loader2, BookOpen, AlertCircle, Feather } from 'lucide-react';
 
 const KnowledgeCenter = () => {

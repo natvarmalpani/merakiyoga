@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { getBlogPosts } from '../services/blogService';
-import { BlogPost } from '../types';
+import { getBlogPosts } from '../services/blogService.ts';
+import { BlogPost } from '../types.ts';
 import { Loader2, Info, AlertCircle, RefreshCcw, Heart, MessageCircle } from 'lucide-react';
-import { useNavigate } from '../services/dataService';
+import { useNavigate } from '../services/dataService.ts';
 
 const Blog = () => {
   const navigate = useNavigate();

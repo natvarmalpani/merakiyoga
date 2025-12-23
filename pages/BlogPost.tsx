@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useNavigate, useParams } from '../services/dataService';
-import { getBlogPostBySlug, getComments, addComment, incrementBlogLikes, deleteComment } from '../services/blogService';
-import { BlogPost as BlogPostType, BlogComment } from '../types';
-import { supabase } from '../services/supabaseClient';
+import { useNavigate, useParams } from '../services/dataService.ts';
+import { getBlogPostBySlug, getComments, addComment, incrementBlogLikes, deleteComment } from '../services/blogService.ts';
+import { BlogPost as BlogPostType, BlogComment } from '../types.ts';
+import { supabase } from '../services/supabaseClient.ts';
 import { Loader2, Calendar, User, Heart, Share2, MessageCircle, Send, ArrowLeft, Trash2, ShieldCheck, Facebook, Twitter, Linkedin, Link as LinkIcon, X, Check } from 'lucide-react';
 // @ts-ignore - bypassing broken framer-motion types in this environment
 import { motion as framerMotion, AnimatePresence } from 'framer-motion';

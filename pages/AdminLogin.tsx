@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Eye, EyeOff, Lock, Mail, AlertTriangle, ArrowRight, CheckCircle, WifiOff, HelpCircle, UserPlus } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail, AlertTriangle, ArrowRight, CheckCircle, WifiOff, HelpCircle } from 'lucide-react';
 // @ts-ignore - bypassing broken framer-motion types in this environment
 import { motion as framerMotion, AnimatePresence } from 'framer-motion';
 const motion = framerMotion as any;
@@ -8,7 +8,6 @@ import { useNavigate } from '../services/dataService';
 
 const AdminLogin = () => {
   const navigate = useNavigate();
-  const [isSignUp, setIsSignUp] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -37,40 +36,24 @@ const AdminLogin = () => {
         throw new Error('Please enter both email and password.');
       }
 
-      if (isSignUp) {
-        // Sign Up Logic
-        const { data, error: authError } = await supabase.auth.signUp({
-          email: formData.email,
-          password: formData.password,
-        });
+      // Explicitly sign out before attempting to sign in to clear stale sessions
+      await supabase.auth.signOut();
 
-        if (authError) throw authError;
+      const { data, error: authError } = await supabase.auth.signInWithPassword({
+        email: formData.email,
+        password: formData.password,
+      });
 
-        if (data.user) {
-          setSuccessMessage('Account created successfully! You can now log in.');
-          setIsSignUp(false); // Switch back to login
+      if (authError) {
+        if (authError.message === 'Invalid login credentials') {
+          throw new Error('Invalid email or password.');
         }
-      } else {
-        // Sign In Logic
-        // Explicitly sign out before attempting to sign in
-        await supabase.auth.signOut();
+        throw authError;
+      }
 
-        const { data, error: authError } = await supabase.auth.signInWithPassword({
-          email: formData.email,
-          password: formData.password,
-        });
-
-        if (authError) {
-          if (authError.message === 'Invalid login credentials') {
-            throw new Error('Invalid email or password.');
-          }
-          throw authError;
-        }
-
-        if (data.user) {
-          setSuccessMessage('Login successful! Redirecting...');
-          setTimeout(() => navigate('/admin/dashboard'), 1000);
-        }
+      if (data.user) {
+        setSuccessMessage('Login successful! Redirecting...');
+        setTimeout(() => navigate('/admin/dashboard'), 1000);
       }
 
     } catch (err: any) {
@@ -101,9 +84,6 @@ const AdminLogin = () => {
               {error.includes('connect') ? <WifiOff className="text-red-600 flex-shrink-0" size={20} /> : <AlertTriangle className="text-red-600 flex-shrink-0" size={20} />}
               <div className="flex-1">
                  <p className="text-sm text-red-700 mt-0.5 leading-snug font-medium">{error}</p>
-                 {error.includes('Invalid email') && !isSignUp && (
-                   <p className="text-xs text-red-500 mt-1 cursor-pointer underline" onClick={() => setIsSignUp(true)}>Don't have an account? Create one.</p>
-                 )}
               </div>
             </motion.div>
           )}
@@ -129,10 +109,10 @@ const AdminLogin = () => {
         >
           <div className="bg-deep-green p-8 text-center relative transition-all duration-300">
             <h1 className="font-serif text-3xl text-white mb-2">
-              {isSignUp ? 'Create Admin' : 'Admin Portal'}
+              Only Admin Login
             </h1>
             <p className="text-sage-green text-sm">
-              {isSignUp ? 'Set up your new admin credentials' : 'Please sign in to access the dashboard'}
+              Please sign in to access the dashboard
             </p>
           </div>
 
@@ -165,7 +145,7 @@ const AdminLogin = () => {
                     value={formData.password}
                     onChange={handleChange}
                     className="w-full pl-11 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sage-green focus:border-transparent outline-none transition-all text-gray-800 placeholder-gray-400"
-                    placeholder={isSignUp ? "Choose a strong password" : "Enter your password"}
+                    placeholder="Enter your password"
                     minLength={6}
                     required
                   />
@@ -188,39 +168,17 @@ const AdminLogin = () => {
                   <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
                 ) : (
                   <>
-                    {isSignUp ? (
-                        <>Create Account <UserPlus size={18} /></>
-                    ) : (
-                        <>Sign In <ArrowRight size={18} /></>
-                    )}
+                    Sign In <ArrowRight size={18} />
                   </>
                 )}
               </button>
             </form>
             
             <div className="text-center mt-6">
-               <p className="text-sm text-gray-500">
-                   {isSignUp ? "Already have an account?" : "Need an admin account?"}
-                   <button 
-                    onClick={() => {
-                        setIsSignUp(!isSignUp);
-                        setError(null);
-                        setSuccessMessage(null);
-                    }}
-                    className="text-deep-green font-medium ml-1 hover:underline outline-none"
-                   >
-                       {isSignUp ? "Log In" : "Create one"}
-                   </button>
-               </p>
+              <a href="mailto:meraki.yoga.healing@gmail.com" className="text-xs text-gray-400 hover:text-sage-green transition-colors flex items-center justify-center gap-1">
+                  <HelpCircle size={12} /> Need help? Contact Support
+              </a>
             </div>
-            
-            {!isSignUp && (
-                <div className="text-center mt-4">
-                <a href="mailto:meraki.yoga.healing@gmail.com" className="text-xs text-gray-400 hover:text-sage-green transition-colors flex items-center justify-center gap-1">
-                    <HelpCircle size={12} /> Need help?
-                </a>
-                </div>
-            )}
           </div>
         </motion.div>
       </div>

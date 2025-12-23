@@ -1,5 +1,5 @@
-import { YogaStyle } from '../types';
-import { yogaStyles as fallbackYogaStyles } from './dataService';
+import { YogaStyle } from '../types.ts';
+import { yogaStyles as fallbackYogaStyles } from './dataService.ts';
 
 // The ID of your Google Sheet
 const SPREADSHEET_ID: string = '1lHu6AKuDVgkY3idyu2fZeuHnW_hrkUhnfdFHhSF8y-8';
