@@ -189,7 +189,6 @@ const Footer = () => {
               <a href="#" className="p-2 bg-white rounded-full text-deep-green hover:bg-sage-green hover:text-white transition-all shadow-sm"><Instagram size={20} /></a>
               <a href="#" className="p-2 bg-white rounded-full text-deep-green hover:bg-sage-green hover:text-white transition-all shadow-sm"><Facebook size={20} /></a>
             </div>
-            <p className="mt-6 text-xs text-gray-400">Join our newsletter for weekly mindfulness tips.</p>
           </div>
         </div>
         
