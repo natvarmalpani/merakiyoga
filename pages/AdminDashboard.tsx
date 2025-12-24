@@ -1,14 +1,13 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from '../services/dataService.ts';
 import { supabase } from '../services/supabaseClient.ts';
-import { getStyles, createStyle, deleteStyle, updateStyle } from '../services/styleService.ts';
-import { getSchedule, createSession, updateSession, deleteSession } from '../services/scheduleService.ts';
+import { getStyles, deleteStyle } from '../services/styleService.ts';
+import { getSchedule, deleteSession } from '../services/scheduleService.ts';
 import { getInquiries, deleteInquiry } from '../services/contactService.ts';
-import { getPrograms, createProgram, updateProgram, deleteProgram } from '../services/programService.ts';
-import { getPricingPlans, createPricingPlan, updatePricingPlan, deletePricingPlan } from '../services/pricingService.ts';
-import { getBlogPosts, createBlogPost, updateBlogPost, deleteBlogPost } from '../services/blogService.ts';
-import { getFeedback, createFeedback, updateFeedback, deleteFeedback } from '../services/feedbackService.ts';
+import { getPrograms, deleteProgram } from '../services/programService.ts';
+import { getPricingPlans, deletePricingPlan } from '../services/pricingService.ts';
+import { getBlogPosts, deleteBlogPost } from '../services/blogService.ts';
+import { getFeedback, deleteFeedback } from '../services/feedbackService.ts';
 import { YogaStyle, ClassSession, ContactInquiry, Course, PricingPlan, BlogPost, CustomerFeedback } from '../types.ts';
 import { 
   Calendar, 
@@ -20,7 +19,6 @@ import {
   X,
   Leaf,
   Plus,
-  Edit2,
   Trash2,
   Loader2,
   Database,
@@ -30,8 +28,11 @@ import {
   CheckSquare,
   Square,
   Trash,
-  // Added Quote icon to imports
-  Quote
+  Quote,
+  Clock,
+  MapPin,
+  MoreHorizontal,
+  Eye
 } from 'lucide-react';
 // @ts-ignore
 import { motion as framerMotion, AnimatePresence } from 'framer-motion';
@@ -129,6 +130,58 @@ const AdminDashboard = () => {
     }
   };
 
+  // --- Deletion Handlers ---
+
+  const handleDeleteStyle = async (slug: string, image: string) => {
+    if(!window.confirm('Delete this yoga style?')) return;
+    setIsLoading(true);
+    await deleteStyle(slug, image);
+    await fetchAllData();
+    setIsLoading(false);
+  };
+
+  const handleDeleteSession = async (id: string) => {
+    if(!window.confirm('Remove this class session?')) return;
+    setIsLoading(true);
+    await deleteSession(id);
+    await fetchAllData();
+    setIsLoading(false);
+  };
+
+  const handleDeleteProgram = async (slug: string) => {
+    if(!window.confirm('Delete this program?')) return;
+    setIsLoading(true);
+    await deleteProgram(slug);
+    await fetchAllData();
+    setIsLoading(false);
+  };
+
+  const handleDeletePricing = async (id: string) => {
+    if(!window.confirm('Delete this pricing plan?')) return;
+    setIsLoading(true);
+    await deletePricingPlan(id);
+    await fetchAllData();
+    setIsLoading(false);
+  };
+
+  const handleDeleteFeedback = async (id: number) => {
+    if(!window.confirm('Delete this testimonial?')) return;
+    setIsLoading(true);
+    await deleteFeedback(id);
+    await fetchAllData();
+    setIsLoading(false);
+  };
+
+  const handleDeletePost = async (id: number) => {
+    if(!window.confirm('Delete this blog post?')) return;
+    setIsLoading(true);
+    await deleteBlogPost(id);
+    await fetchAllData();
+    setIsLoading(false);
+  };
+
+  // --- Message Bulk Selection ---
+
   const toggleInquirySelection = (id: string) => {
     setSelectedInquiryIds(prev => 
       prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
@@ -209,14 +262,182 @@ const AdminDashboard = () => {
   );
 
   const renderContent = () => {
-      // Reusable table header with darker background
+      // Darker table header as requested
       const TableHeader = ({ cols }: { cols: string[] }) => (
-        <div className="grid gap-4 px-6 py-4 bg-gray-100 border-b border-gray-200 font-bold text-xs uppercase tracking-widest text-gray-700" style={{ gridTemplateColumns: cols.join(' ') }}>
+        <div className="grid gap-4 px-6 py-4 bg-gray-200 border-b border-gray-300 font-bold text-xs uppercase tracking-widest text-gray-800" style={{ gridTemplateColumns: cols.join(' ') }}>
           {cols.map((_, i) => <div key={i}>{_}</div>)}
         </div>
       );
 
       switch (activeTab) {
+          case 'styles':
+              return (
+                <DashboardSection title="Yoga Styles" description="Manage studio class types." onAdd={() => setModalType('styles')}>
+                   <div className="overflow-x-auto">
+                     <div className="min-w-[800px]">
+                       <TableHeader cols={['80px', '200px', '150px', '1fr', '100px']} />
+                       <div className="divide-y divide-gray-50">
+                         {styles.map(style => (
+                           <div key={style.slug} className="grid gap-4 px-6 py-4 items-center hover:bg-gray-50 text-sm" style={{ gridTemplateColumns: '80px 200px 150px 1fr 100px' }}>
+                             <img src={style.image} alt="" className="w-12 h-12 rounded-lg object-cover bg-gray-100" />
+                             <div className="font-bold text-gray-900">{style.name}</div>
+                             <div>
+                               <span className={`px-2 py-1 rounded text-xs font-bold uppercase ${style.difficulty === 'Beginner' ? 'bg-green-100 text-green-700' : style.difficulty === 'Intermediate' ? 'bg-yellow-100 text-yellow-700' : 'bg-orange-100 text-orange-700'}`}>
+                                 {style.difficulty}
+                               </span>
+                             </div>
+                             <div className="text-gray-500 truncate">{style.description}</div>
+                             <div className="flex justify-end gap-2">
+                               <button onClick={() => handleDeleteStyle(style.slug, style.image)} className="p-2 text-gray-400 hover:text-red-500 transition-colors"><Trash2 size={16} /></button>
+                             </div>
+                           </div>
+                         ))}
+                       </div>
+                     </div>
+                   </div>
+                </DashboardSection>
+              );
+
+          case 'schedule':
+              return (
+                <DashboardSection title="Schedule" description="Manage weekly timetable." onAdd={() => setModalType('schedule')}>
+                   <div className="overflow-x-auto">
+                     <div className="min-w-[800px]">
+                       <TableHeader cols={['120px', '120px', '200px', '150px', '1fr', '100px']} />
+                       <div className="divide-y divide-gray-50">
+                         {scheduleData.map(session => (
+                           <div key={session.id} className="grid gap-4 px-6 py-4 items-center hover:bg-gray-50 text-sm" style={{ gridTemplateColumns: '120px 120px 200px 150px 1fr 100px' }}>
+                             <div className="font-medium text-sage-green flex items-center gap-2"><Calendar size={14} />{session.day}</div>
+                             <div className="text-gray-600 flex items-center gap-2"><Clock size={14} />{session.time}</div>
+                             <div className="font-bold text-deep-green">{session.classType}</div>
+                             <div className="text-gray-600 flex items-center gap-2"><UserIcon size={14} />{session.instructor}</div>
+                             <div className="text-gray-500 text-xs flex items-center gap-2"><MapPin size={14} />{session.location}</div>
+                             <div className="flex justify-end gap-2">
+                               <button onClick={() => handleDeleteSession(session.id)} className="p-2 text-gray-400 hover:text-red-500 transition-colors"><Trash2 size={16} /></button>
+                             </div>
+                           </div>
+                         ))}
+                       </div>
+                     </div>
+                   </div>
+                </DashboardSection>
+              );
+
+          case 'programs':
+              return (
+                <DashboardSection title="Programs" description="Manage structured courses." onAdd={() => setModalType('programs')}>
+                   <div className="overflow-x-auto">
+                     <div className="min-w-[800px]">
+                       <TableHeader cols={['80px', '200px', '120px', '120px', '1fr', '100px']} />
+                       <div className="divide-y divide-gray-50">
+                         {programs.map(prog => (
+                           <div key={prog.slug} className="grid gap-4 px-6 py-4 items-center hover:bg-gray-50 text-sm" style={{ gridTemplateColumns: '80px 200px 120px 120px 1fr 100px' }}>
+                             <img src={prog.image} alt="" className="w-12 h-12 rounded-lg object-cover bg-gray-100" />
+                             <div className="font-bold text-gray-900">{prog.title}</div>
+                             <div className="text-gray-600">{prog.level}</div>
+                             <div className="font-mono font-medium text-sage-green">₹{prog.price}</div>
+                             <div className="text-gray-500 truncate">{prog.description}</div>
+                             <div className="flex justify-end gap-2">
+                               <button onClick={() => handleDeleteProgram(prog.slug)} className="p-2 text-gray-400 hover:text-red-500 transition-colors"><Trash2 size={16} /></button>
+                             </div>
+                           </div>
+                         ))}
+                       </div>
+                     </div>
+                   </div>
+                </DashboardSection>
+              );
+
+          case 'pricing':
+              return (
+                <DashboardSection title="Pricing" description="Manage membership plans." onAdd={() => setModalType('pricing')}>
+                   <div className="overflow-x-auto">
+                     <div className="min-w-[800px]">
+                       <TableHeader cols={['200px', '150px', '150px', '1fr', '100px']} />
+                       <div className="divide-y divide-gray-50">
+                         {pricingPlansData.map(plan => (
+                           <div key={plan.id} className="grid gap-4 px-6 py-4 items-center hover:bg-gray-50 text-sm" style={{ gridTemplateColumns: '200px 150px 150px 1fr 100px' }}>
+                             <div className="font-bold text-gray-900 flex items-center gap-2">
+                                {plan.highlight && <span className="w-2 h-2 rounded-full bg-sage-green" title="Highlighted"></span>}
+                                {plan.name}
+                             </div>
+                             <div className="font-mono font-medium text-sage-green">{plan.price}</div>
+                             <div className="text-gray-500">{plan.period}</div>
+                             <div className="flex gap-2 flex-wrap">
+                                {plan.benefits.slice(0, 2).map((b, i) => <span key={i} className="text-xs bg-gray-100 px-2 py-1 rounded text-gray-600">{b}</span>)}
+                                {plan.benefits.length > 2 && <span className="text-xs text-gray-400">+{plan.benefits.length - 2} more</span>}
+                             </div>
+                             <div className="flex justify-end gap-2">
+                               <button onClick={() => handleDeletePricing(plan.id)} className="p-2 text-gray-400 hover:text-red-500 transition-colors"><Trash2 size={16} /></button>
+                             </div>
+                           </div>
+                         ))}
+                       </div>
+                     </div>
+                   </div>
+                </DashboardSection>
+              );
+
+          case 'feedback':
+              return (
+                <DashboardSection title="Feedback" description="Manage customer testimonials." onAdd={() => setModalType('feedback')}>
+                   <div className="overflow-x-auto">
+                     <div className="min-w-[800px]">
+                       <TableHeader cols={['60px', '180px', '150px', '1fr', '100px']} />
+                       <div className="divide-y divide-gray-50">
+                         {feedback.map(item => (
+                           <div key={item.id} className="grid gap-4 px-6 py-4 items-center hover:bg-gray-50 text-sm" style={{ gridTemplateColumns: '60px 180px 150px 1fr 100px' }}>
+                             <img src={item.image || 'https://picsum.photos/100'} alt="" className="w-10 h-10 rounded-full object-cover bg-gray-100" />
+                             <div>
+                               <div className="font-bold text-gray-900">{item.name}</div>
+                               <div className="text-xs text-gray-500">{item.role}</div>
+                             </div>
+                             <div className="flex text-yellow-400 text-xs">
+                                {'★'.repeat(item.rating)}{'☆'.repeat(5-item.rating)}
+                             </div>
+                             <div className="text-gray-600 italic truncate">"{item.quote}"</div>
+                             <div className="flex justify-end gap-2">
+                               <button onClick={() => handleDeleteFeedback(item.id)} className="p-2 text-gray-400 hover:text-red-500 transition-colors"><Trash2 size={16} /></button>
+                             </div>
+                           </div>
+                         ))}
+                       </div>
+                     </div>
+                   </div>
+                </DashboardSection>
+              );
+
+          case 'blog':
+              return (
+                <DashboardSection title="Blog" description="Manage articles and posts." onAdd={() => setModalType('blog')}>
+                   <div className="overflow-x-auto">
+                     <div className="min-w-[800px]">
+                       <TableHeader cols={['80px', '1fr', '120px', '100px', '100px']} />
+                       <div className="divide-y divide-gray-50">
+                         {blogPosts.map(post => (
+                           <div key={post.id} className="grid gap-4 px-6 py-4 items-center hover:bg-gray-50 text-sm" style={{ gridTemplateColumns: '80px 1fr 120px 100px 100px' }}>
+                             <img src={post.image || 'https://picsum.photos/100'} alt="" className="w-12 h-12 rounded-lg object-cover bg-gray-100" />
+                             <div>
+                                <div className="font-bold text-gray-900">{post.title}</div>
+                                <div className="text-xs text-gray-500">{new Date(post.created_at).toLocaleDateString()}</div>
+                             </div>
+                             <div>
+                                <span className={`px-2 py-1 rounded text-xs font-bold uppercase ${post.published ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                                  {post.published ? 'Published' : 'Draft'}
+                                </span>
+                             </div>
+                             <div className="text-gray-500 text-xs text-center">{post.likes} Likes</div>
+                             <div className="flex justify-end gap-2">
+                               <button onClick={() => handleDeletePost(post.id)} className="p-2 text-gray-400 hover:text-red-500 transition-colors"><Trash2 size={16} /></button>
+                             </div>
+                           </div>
+                         ))}
+                       </div>
+                     </div>
+                   </div>
+                </DashboardSection>
+              );
+
           case 'messages':
               return (
                 <DashboardSection 
@@ -236,7 +457,7 @@ const AdminDashboard = () => {
                 >
                   <div className="overflow-x-auto">
                     <div className="min-w-[800px]">
-                      <TableHeader cols={['40px', '140px', '160px', '140px', '1fr', '80px']} />
+                      <TableHeader cols={['40px', '120px', '160px', '120px', '1fr', '80px']} />
                       <div className="divide-y divide-gray-50">
                         {inquiries.length === 0 ? (
                           <div className="p-20 text-center text-gray-400">
@@ -245,14 +466,17 @@ const AdminDashboard = () => {
                           </div>
                         ) : (
                           inquiries.map((inq) => (
-                            <div key={inq.id} className={`grid gap-4 px-6 py-4 items-center hover:bg-gray-50/80 transition-colors text-sm ${selectedInquiryIds.includes(inq.id) ? 'bg-sage-green/5' : ''}`} style={{ gridTemplateColumns: '40px 140px 160px 140px 1fr 80px' }}>
+                            <div key={inq.id} className={`grid gap-4 px-6 py-4 items-center hover:bg-gray-50/80 transition-colors text-sm ${selectedInquiryIds.includes(inq.id) ? 'bg-sage-green/5' : ''}`} style={{ gridTemplateColumns: '40px 120px 160px 120px 1fr 80px' }}>
                               <button onClick={() => toggleInquirySelection(inq.id)} className="text-gray-400 hover:text-sage-green transition-colors">
                                 {selectedInquiryIds.includes(inq.id) ? <CheckSquare size={20} className="text-sage-green" /> : <Square size={20} />}
                               </button>
                               <div className="text-gray-400 font-mono text-xs">{new Date(inq.created_at).toLocaleDateString()}</div>
-                              <div className="font-bold text-gray-900">{inq.first_name} {inq.last_name}</div>
+                              <div>
+                                <div className="font-bold text-gray-900">{inq.first_name} {inq.last_name}</div>
+                                <div className="text-xs text-gray-400">{inq.email}</div>
+                              </div>
                               <div><span className="bg-gray-100 px-2 py-1 rounded text-[10px] font-black uppercase text-gray-500 tracking-tighter">{inq.inquiry_type || 'General'}</span></div>
-                              <div className="text-gray-600 line-clamp-2 italic">"{inq.message}"</div>
+                              <div className="text-gray-600 line-clamp-2 italic text-xs">"{inq.message}"</div>
                               <div className="flex justify-end gap-2">
                                 <button onClick={() => { if(window.confirm('Delete this message?')) { deleteInquiry(inq.id).then(fetchAllData); } }} className="p-2 text-gray-400 hover:text-red-500"><Trash2 size={16} /></button>
                               </div>
@@ -266,14 +490,7 @@ const AdminDashboard = () => {
               );
           
           default:
-            return (
-              <DashboardSection title={activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} description={`Manage your studio ${activeTab}.`}>
-                <div className="p-20 text-center text-gray-400">
-                    <Database size={48} className="mx-auto mb-4 opacity-20" />
-                    <p>Database management for {activeTab} will appear here.</p>
-                </div>
-              </DashboardSection>
-            );
+            return null;
       }
   };
 
