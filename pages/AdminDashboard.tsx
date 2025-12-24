@@ -61,7 +61,7 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean; onClose:
 const DashboardSection = ({ title, description, onAdd, children, hideAddButton }: any) => (
   <div className="space-y-6">
     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-      <div className="px-1">
+      <div className="px-1 text-left">
         <h2 className="font-serif text-2xl sm:text-3xl text-deep-green">{title}</h2>
         <p className="text-gray-500 text-sm mt-1">{description}</p>
       </div>
@@ -119,10 +119,6 @@ const AdminDashboard = () => {
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [feedback, setFeedback] = useState<CustomerFeedback[]>([]);
 
-  // Pagination
-  const [messagePage, setMessagePage] = useState(1);
-  const messagesPerPage = 10;
-  
   // Modals
   const [modalType, setModalType] = useState<string | null>(null);
   const [editingItem, setEditingItem] = useState<any>(null);
@@ -286,8 +282,8 @@ const AdminDashboard = () => {
                 {type === 'blog' && <td className="px-6 py-4"><Badge type={item.published ? 'published' : 'draft'}>{item.published ? 'Published' : 'Draft'}</Badge></td>}
                 <td className="px-6 py-4 text-right">
                   <div className="flex justify-end gap-2">
-                    <button onClick={() => openModal(type, item)} className="p-1.5 text-gray-400 hover:text-sage-green"><Edit2 size={16} /></button>
-                    <button onClick={() => handleDelete(type, item)} className="p-1.5 text-gray-400 hover:text-red-500"><Trash2 size={16} /></button>
+                    <button onClick={() => openModal(type, item)} className="p-1.5 text-gray-400 hover:text-sage-green transition-colors"><Edit2 size={16} /></button>
+                    <button onClick={() => handleDelete(type, item)} className="p-1.5 text-gray-400 hover:text-red-500 transition-colors"><Trash2 size={16} /></button>
                   </div>
                 </td>
               </tr>
@@ -296,21 +292,6 @@ const AdminDashboard = () => {
         </table>
       </TableWrapper>
     );
-  };
-
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'styles': return <DashboardSection title="Yoga Styles" description="Manage studio class types." onAdd={() => openModal('styles')}>{renderTable('styles', styles)}</DashboardSection>;
-      case 'schedule': return <DashboardSection title="Schedule" description="Manage class timetable." onAdd={() => openModal('schedule')}>{renderTable('schedule', scheduleData)}</DashboardSection>;
-      case 'programs': return <DashboardSection title="Programs" description="Manage curated courses." onAdd={() => openModal('programs')}>{renderTable('programs', programs)}</DashboardSection>;
-      case 'pricing': return <DashboardSection title="Pricing" description="Manage membership tiers." onAdd={() => openModal('pricing')}>{renderTable('pricing', pricingPlansData)}</DashboardSection>;
-      case 'feedback': return <DashboardSection title="Feedback" description="Manage student testimonials." onAdd={() => openModal('feedback')}>{renderTable('feedback', feedback)}</DashboardSection>;
-      case 'blog': return <DashboardSection title="Blog" description="Manage wellness articles." onAdd={() => openModal('blog')}>{renderTable('blog', blogPosts)}</DashboardSection>;
-      case 'messages': 
-        const currentMsgs = inquiries.slice((messagePage-1)*messagesPerPage, messagePage*messagesPerPage);
-        return <DashboardSection title="Inquiries" description="Client messages." hideAddButton>{renderTable('inquiry', currentMsgs)}</DashboardSection>;
-      default: return <EmptyState message="Section missing." />;
-    }
   };
 
   const navItems = [
@@ -323,89 +304,112 @@ const AdminDashboard = () => {
     { id: 'blog', label: 'Blog', icon: <PenTool size={20} /> },
   ];
 
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'styles': return <DashboardSection title="Yoga Styles" description="Manage studio class types." onAdd={() => openModal('styles')}>{renderTable('styles', styles)}</DashboardSection>;
+      case 'schedule': return <DashboardSection title="Schedule" description="Manage class timetable." onAdd={() => openModal('schedule')}>{renderTable('schedule', scheduleData)}</DashboardSection>;
+      case 'programs': return <DashboardSection title="Programs" description="Manage curated courses." onAdd={() => openModal('programs')}>{renderTable('programs', programs)}</DashboardSection>;
+      case 'pricing': return <DashboardSection title="Pricing" description="Manage membership tiers." onAdd={() => openModal('pricing')}>{renderTable('pricing', pricingPlansData)}</DashboardSection>;
+      case 'feedback': return <DashboardSection title="Feedback" description="Manage student testimonials." onAdd={() => openModal('feedback')}>{renderTable('feedback', feedback)}</DashboardSection>;
+      case 'blog': return <DashboardSection title="Blog" description="Manage wellness articles." onAdd={() => openModal('blog')}>{renderTable('blog', blogPosts)}</DashboardSection>;
+      case 'messages': return <DashboardSection title="Inquiries" description="Client messages." hideAddButton>{renderTable('inquiry', inquiries)}</DashboardSection>;
+      default: return <EmptyState message="Section missing." />;
+    }
+  };
+
   if (isLoading) return <div className="min-h-screen bg-gray-50 flex items-center justify-center"><Loader2 className="animate-spin text-sage-green" size={48} /></div>;
 
+  const SidebarContent = ({ isMobile = false }) => (
+    <div className="flex flex-col h-full bg-deep-green text-white">
+      <div className="p-8 border-b border-white/5 flex items-center justify-between">
+        <Link to="/" className="font-serif text-2xl font-bold flex items-center gap-2">
+          <LayoutDashboard size={24} className="text-sage-green" /> Meraki
+        </Link>
+        {isMobile && (
+          <button onClick={() => setIsSidebarOpen(false)} className="p-2 hover:bg-white/10 rounded-lg">
+            <X size={20} />
+          </button>
+        )}
+      </div>
+
+      <nav className="flex-1 py-6 px-4 space-y-1 overflow-y-auto hide-scrollbar">
+        {navItems.map(item => (
+          <button 
+            key={item.id} 
+            onClick={() => {
+                setActiveTab(item.id);
+                if(isMobile) setIsSidebarOpen(false);
+            }} 
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${activeTab === item.id ? 'bg-sage-green text-deep-green font-bold shadow-lg' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+          >
+            {item.icon} {item.label}
+          </button>
+        ))}
+      </nav>
+
+      <div className="p-4 border-t border-white/5 mt-auto bg-deep-green/50 backdrop-blur-md">
+        <button 
+          onClick={handleLogout} 
+          className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-red-300 hover:text-white hover:bg-red-500 rounded-xl transition-all border border-red-500/20 group"
+        >
+          <LogOut size={20} className="group-hover:scale-110 transition-transform" /> Sign Out
+        </button>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col lg:flex-row">
+    <div className="min-h-screen bg-gray-50 flex flex-col lg:flex-row relative">
       
-      {/* Mobile Header */}
-      <header className="lg:hidden flex items-center justify-between px-6 py-4 bg-deep-green text-white fixed top-0 w-full z-[70] shadow-md">
-        <button onClick={() => setIsSidebarOpen(true)} className="p-2 -ml-2 hover:bg-white/10 rounded-lg">
+      {/* Mobile Top Header */}
+      <header className="lg:hidden flex items-center justify-between px-6 py-4 bg-deep-green text-white fixed top-0 w-full z-[70] shadow-md h-[64px]">
+        <button onClick={() => setIsSidebarOpen(true)} className="p-2 -ml-2 hover:bg-white/10 rounded-lg transition-colors">
           <Menu size={24} />
         </button>
-        <div className="font-serif text-xl font-bold">Admin Portal</div>
-        <button onClick={handleLogout} className="p-2 -mr-2 text-red-300 hover:text-red-100">
+        <div className="font-serif text-xl font-bold tracking-tight">Admin Portal</div>
+        <button onClick={handleLogout} className="p-2 -mr-2 text-red-300 hover:text-white transition-colors" title="Log Out">
           <LogOut size={24} />
         </button>
       </header>
 
-      {/* Sidebar (Desktop Fixed, Mobile Overlay) */}
+      {/* Desktop Permanent Sidebar */}
+      <aside className="hidden lg:flex flex-col w-64 fixed h-screen top-0 left-0 z-40 border-r border-gray-100 shadow-xl">
+        <SidebarContent />
+      </aside>
+
+      {/* Mobile Sidebar Overlay */}
       <AnimatePresence>
-        {(isSidebarOpen || window.innerWidth >= 1024) && (
-          <>
-            {/* Mobile Backdrop */}
-            {isSidebarOpen && (
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setIsSidebarOpen(false)}
-                className="lg:hidden fixed inset-0 bg-black/50 z-[80] backdrop-blur-sm"
-              />
-            )}
-            
+        {isSidebarOpen && (
+          <div className="lg:hidden fixed inset-0 z-[100]">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsSidebarOpen(false)}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            />
             <motion.aside 
-              initial={window.innerWidth < 1024 ? { x: -260 } : { x: 0 }}
+              initial={{ x: -280 }}
               animate={{ x: 0 }}
-              exit={{ x: -260 }}
+              exit={{ x: -280 }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className={`fixed lg:sticky top-0 left-0 flex flex-col w-64 bg-deep-green text-white h-screen z-[90] shadow-2xl lg:shadow-none`}
+              className="absolute top-0 left-0 w-[280px] h-full shadow-2xl"
             >
-              <div className="p-8 border-b border-white/5 flex items-center justify-between">
-                <Link to="/" className="font-serif text-2xl font-bold flex items-center gap-2">
-                  <LayoutDashboard size={24} className="text-sage-green" /> Meraki
-                </Link>
-                <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden p-1 hover:bg-white/10 rounded">
-                  <X size={20} />
-                </button>
-              </div>
-
-              <nav className="flex-1 py-6 px-4 space-y-1 overflow-y-auto">
-                {navItems.map(item => (
-                  <button 
-                    key={item.id} 
-                    onClick={() => {
-                        setActiveTab(item.id);
-                        if(window.innerWidth < 1024) setIsSidebarOpen(false);
-                    }} 
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${activeTab === item.id ? 'bg-sage-green text-deep-green font-bold shadow-lg shadow-black/10 scale-[1.02]' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
-                  >
-                    {item.icon} {item.label}
-                  </button>
-                ))}
-              </nav>
-
-              <div className="p-4 border-t border-white/5 mt-auto">
-                <button 
-                  onClick={handleLogout} 
-                  className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-red-300 hover:text-white hover:bg-red-500/10 rounded-xl transition-all border border-red-500/20"
-                >
-                  <LogOut size={20} /> Sign Out
-                </button>
-              </div>
+              <SidebarContent isMobile />
             </motion.aside>
-          </>
+          </div>
         )}
       </AnimatePresence>
 
-      <main className="flex-1 p-4 md:p-8 pt-24 lg:pt-8 min-h-screen">
+      {/* Main Content Area */}
+      <main className="flex-1 p-4 md:p-8 pt-24 lg:pt-8 lg:ml-64 min-h-screen">
         <div className="max-w-6xl mx-auto">{renderContent()}</div>
       </main>
 
+      {/* Shared Forms Modal */}
       <Modal isOpen={!!modalType} onClose={() => setModalType(null)} title={`${editingItem ? 'Edit' : 'Add'} ${modalType}`}>
         <form onSubmit={handleSave} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-             {/* Dynamic Form Fields */}
              {modalType === 'styles' && (
                 <>
                   <div className="sm:col-span-2"><label className="text-[10px] font-bold text-gray-400 uppercase">Name</label><input name="name" value={formData.name || ''} onChange={handleFormChange} className="w-full p-3 bg-gray-50 border rounded-lg outline-none" required /></div>
@@ -431,7 +435,6 @@ const AdminDashboard = () => {
                   <div><label className="text-[10px] font-bold text-gray-400 uppercase">Price (₹)</label><input type="number" name="price" value={formData.price || ''} onChange={handleFormChange} className="w-full p-3 bg-gray-50 border rounded-lg outline-none" required /></div>
                   <div><label className="text-[10px] font-bold text-gray-400 uppercase">Duration</label><input name="duration" value={formData.duration || ''} onChange={handleFormChange} className="w-full p-3 bg-gray-50 border rounded-lg outline-none" /></div>
                   <div className="sm:col-span-2"><label className="text-[10px] font-bold text-gray-400 uppercase">Description</label><textarea name="description" value={formData.description || ''} onChange={handleFormChange} className="w-full p-3 bg-gray-50 border rounded-lg outline-none" rows={2} required /></div>
-                  <div className="sm:col-span-2"><label className="text-[10px] font-bold text-gray-400 uppercase">Brochure PDF</label><input type="file" accept="application/pdf" onChange={e => handleFileChange(e, 'pdf')} className="w-full text-xs" /></div>
                 </>
              )}
 
@@ -456,27 +459,29 @@ const AdminDashboard = () => {
                 <>
                   <div className="sm:col-span-2"><label className="text-[10px] font-bold text-gray-400 uppercase">Post Title</label><input name="title" value={formData.title || ''} onChange={handleFormChange} className="w-full p-3 bg-gray-50 border rounded-lg outline-none" required /></div>
                   <div className="sm:col-span-2"><label className="text-[10px] font-bold text-gray-400 uppercase">Excerpt</label><textarea name="excerpt" value={formData.excerpt || ''} onChange={handleFormChange} className="w-full p-3 bg-gray-50 border rounded-lg outline-none" rows={2} required /></div>
-                  <div className="sm:col-span-2"><label className="text-[10px] font-bold text-gray-400 uppercase">Content (Markdown supported)</label><textarea name="content" value={formData.content || ''} onChange={handleFormChange} className="w-full p-3 bg-gray-50 border rounded-lg outline-none font-mono text-xs" rows={6} required /></div>
+                  <div className="sm:col-span-2"><label className="text-[10px] font-bold text-gray-400 uppercase">Content (Markdown)</label><textarea name="content" value={formData.content || ''} onChange={handleFormChange} className="w-full p-3 bg-gray-50 border rounded-lg outline-none font-mono text-xs" rows={6} required /></div>
                   <div className="flex items-center gap-2"><input type="checkbox" name="published" checked={formData.published || false} onChange={handleFormChange} id="published"/><label htmlFor="published" className="text-sm">Published</label></div>
                 </>
              )}
 
-             {/* Shared Image Section */}
+             {/* Shared Image Upload Section */}
              {['styles', 'programs', 'feedback', 'blog'].includes(modalType!) && (
                 <div className="sm:col-span-2 border-t pt-4">
                   <label className="text-[10px] font-bold text-gray-400 uppercase block mb-2">Cover Image</label>
                   <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 rounded bg-gray-100 overflow-hidden flex items-center justify-center">
+                    <div className="w-16 h-16 rounded-lg bg-gray-100 overflow-hidden flex items-center justify-center border border-gray-100">
                       {imagePreview ? <img src={imagePreview} className="w-full h-full object-cover" /> : <Upload className="text-gray-300" />}
                     </div>
-                    <input type="file" accept="image/*" onChange={e => handleFileChange(e, 'image')} className="text-xs" />
+                    <div className="flex-1">
+                      <input type="file" accept="image/*" onChange={e => handleFileChange(e, 'image')} className="text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-sage-green/10 file:text-sage-green hover:file:bg-sage-green/20" />
+                    </div>
                   </div>
                 </div>
              )}
           </div>
           <div className="flex justify-end gap-3 pt-4 border-t">
-            <button type="button" onClick={() => setModalType(null)} className="px-6 py-2 text-sm text-gray-500">Cancel</button>
-            <button type="submit" disabled={isSubmitting} className="bg-deep-green text-white px-8 py-2 rounded-xl font-medium flex items-center gap-2">
+            <button type="button" onClick={() => setModalType(null)} className="px-6 py-2 text-sm text-gray-500 hover:text-gray-700 transition-colors">Cancel</button>
+            <button type="submit" disabled={isSubmitting} className="bg-deep-green text-white px-8 py-2 rounded-xl font-medium flex items-center gap-2 hover:bg-opacity-90 active:scale-[0.98] transition-all disabled:opacity-50">
               {isSubmitting ? <Loader2 className="animate-spin" size={18}/> : 'Save Changes'}
             </button>
           </div>
