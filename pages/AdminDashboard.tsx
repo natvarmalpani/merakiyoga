@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from '../services/dataService.ts';
 import { supabase } from '../services/supabaseClient.ts';
@@ -25,14 +24,11 @@ import {
   Loader2,
   Image as ImageIcon,
   Database,
-  Terminal,
   MessageSquare,
-  FileText,
-  ChevronLeft,
-  ChevronRight,
   Upload,
   Star,
-  Quote
+  Quote,
+  LayoutDashboard
 } from 'lucide-react';
 // @ts-ignore
 import { motion as framerMotion, AnimatePresence } from 'framer-motion';
@@ -90,7 +86,6 @@ const EmptyState = ({ message }: { message: string }) => (
   </div>
 );
 
-// Added optional question mark to children to resolve TypeScript missing property error
 const TableWrapper = ({ children }: { children?: React.ReactNode }) => (
     <div className="overflow-x-auto w-full scrollbar-thin scrollbar-thumb-gray-200">
         <div className="inline-block min-w-full align-middle">
@@ -111,7 +106,7 @@ const Badge = ({ children, type }: { children?: React.ReactNode, type?: string }
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('styles');
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
@@ -158,7 +153,12 @@ const AdminDashboard = () => {
     setFeedback(fetchedFeedback);
   };
 
-  const handleLogout = async () => { await supabase.auth.signOut(); navigate('/admin'); };
+  const handleLogout = async () => { 
+    if(window.confirm('Are you sure you want to log out?')) {
+        await supabase.auth.signOut(); 
+        navigate('/admin'); 
+    }
+  };
 
   const handleFormChange = (e: any) => {
     const { name, value, type, checked } = e.target;
@@ -313,32 +313,92 @@ const AdminDashboard = () => {
     }
   };
 
+  const navItems = [
+    { id: 'styles', label: 'Styles', icon: <Leaf size={20} /> },
+    { id: 'schedule', label: 'Schedule', icon: <Calendar size={20} /> },
+    { id: 'programs', label: 'Programs', icon: <BookOpen size={20} /> },
+    { id: 'pricing', label: 'Pricing', icon: <CreditCard size={20} /> },
+    { id: 'messages', label: 'Messages', icon: <MessageSquare size={20} /> },
+    { id: 'feedback', label: 'Feedback', icon: <Quote size={20} /> },
+    { id: 'blog', label: 'Blog', icon: <PenTool size={20} /> },
+  ];
+
   if (isLoading) return <div className="min-h-screen bg-gray-50 flex items-center justify-center"><Loader2 className="animate-spin text-sage-green" size={48} /></div>;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      {/* Sidebar */}
-      <aside className="hidden lg:flex flex-col w-64 bg-deep-green text-white fixed h-full z-[60]">
-        <div className="p-8 border-b border-white/5"><Link to="/" className="font-serif text-2xl font-bold">Meraki</Link></div>
-        <nav className="flex-1 py-6 px-4 space-y-1">
-          {[
-            { id: 'styles', label: 'Styles', icon: <Leaf size={20} /> },
-            { id: 'schedule', label: 'Schedule', icon: <Calendar size={20} /> },
-            { id: 'programs', label: 'Programs', icon: <BookOpen size={20} /> },
-            { id: 'pricing', label: 'Pricing', icon: <CreditCard size={20} /> },
-            { id: 'messages', label: 'Messages', icon: <MessageSquare size={20} /> },
-            { id: 'feedback', label: 'Feedback', icon: <Quote size={20} /> },
-            { id: 'blog', label: 'Blog', icon: <PenTool size={20} /> },
-          ].map(item => (
-            <button key={item.id} onClick={() => setActiveTab(item.id)} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${activeTab === item.id ? 'bg-sage-green text-deep-green font-bold' : 'text-gray-400 hover:text-white'}`}>
-              {item.icon} {item.label}
-            </button>
-          ))}
-        </nav>
-        <div className="p-4 border-t border-white/5"><button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-300"><LogOut size={18} /> Sign Out</button></div>
-      </aside>
+    <div className="min-h-screen bg-gray-50 flex flex-col lg:flex-row">
+      
+      {/* Mobile Header */}
+      <header className="lg:hidden flex items-center justify-between px-6 py-4 bg-deep-green text-white fixed top-0 w-full z-[70] shadow-md">
+        <button onClick={() => setIsSidebarOpen(true)} className="p-2 -ml-2 hover:bg-white/10 rounded-lg">
+          <Menu size={24} />
+        </button>
+        <div className="font-serif text-xl font-bold">Admin Portal</div>
+        <button onClick={handleLogout} className="p-2 -mr-2 text-red-300 hover:text-red-100">
+          <LogOut size={24} />
+        </button>
+      </header>
 
-      <main className="flex-1 lg:ml-64 p-4 md:p-8 pt-24 lg:pt-8 min-h-screen">
+      {/* Sidebar (Desktop Fixed, Mobile Overlay) */}
+      <AnimatePresence>
+        {(isSidebarOpen || window.innerWidth >= 1024) && (
+          <>
+            {/* Mobile Backdrop */}
+            {isSidebarOpen && (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setIsSidebarOpen(false)}
+                className="lg:hidden fixed inset-0 bg-black/50 z-[80] backdrop-blur-sm"
+              />
+            )}
+            
+            <motion.aside 
+              initial={window.innerWidth < 1024 ? { x: -260 } : { x: 0 }}
+              animate={{ x: 0 }}
+              exit={{ x: -260 }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className={`fixed lg:sticky top-0 left-0 flex flex-col w-64 bg-deep-green text-white h-screen z-[90] shadow-2xl lg:shadow-none`}
+            >
+              <div className="p-8 border-b border-white/5 flex items-center justify-between">
+                <Link to="/" className="font-serif text-2xl font-bold flex items-center gap-2">
+                  <LayoutDashboard size={24} className="text-sage-green" /> Meraki
+                </Link>
+                <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden p-1 hover:bg-white/10 rounded">
+                  <X size={20} />
+                </button>
+              </div>
+
+              <nav className="flex-1 py-6 px-4 space-y-1 overflow-y-auto">
+                {navItems.map(item => (
+                  <button 
+                    key={item.id} 
+                    onClick={() => {
+                        setActiveTab(item.id);
+                        if(window.innerWidth < 1024) setIsSidebarOpen(false);
+                    }} 
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${activeTab === item.id ? 'bg-sage-green text-deep-green font-bold shadow-lg shadow-black/10 scale-[1.02]' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+                  >
+                    {item.icon} {item.label}
+                  </button>
+                ))}
+              </nav>
+
+              <div className="p-4 border-t border-white/5 mt-auto">
+                <button 
+                  onClick={handleLogout} 
+                  className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-red-300 hover:text-white hover:bg-red-500/10 rounded-xl transition-all border border-red-500/20"
+                >
+                  <LogOut size={20} /> Sign Out
+                </button>
+              </div>
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
+
+      <main className="flex-1 p-4 md:p-8 pt-24 lg:pt-8 min-h-screen">
         <div className="max-w-6xl mx-auto">{renderContent()}</div>
       </main>
 
