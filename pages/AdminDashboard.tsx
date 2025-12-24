@@ -32,7 +32,8 @@ import {
   Clock,
   MapPin,
   MoreHorizontal,
-  Eye
+  Eye,
+  Phone
 } from 'lucide-react';
 // @ts-ignore
 import { motion as framerMotion, AnimatePresence } from 'framer-motion';
@@ -262,10 +263,10 @@ const AdminDashboard = () => {
   );
 
   const renderContent = () => {
-      // Darker table header as requested
-      const TableHeader = ({ cols }: { cols: string[] }) => (
+      // Updated TableHeader to accept text labels instead of just widths
+      const TableHeader = ({ cols, labels }: { cols: string[], labels: string[] }) => (
         <div className="grid gap-4 px-6 py-4 bg-gray-200 border-b border-gray-300 font-bold text-xs uppercase tracking-widest text-gray-800" style={{ gridTemplateColumns: cols.join(' ') }}>
-          {cols.map((_, i) => <div key={i}>{_}</div>)}
+          {labels.map((label, i) => <div key={i}>{label}</div>)}
         </div>
       );
 
@@ -275,7 +276,10 @@ const AdminDashboard = () => {
                 <DashboardSection title="Yoga Styles" description="Manage studio class types." onAdd={() => setModalType('styles')}>
                    <div className="overflow-x-auto">
                      <div className="min-w-[800px]">
-                       <TableHeader cols={['80px', '200px', '150px', '1fr', '100px']} />
+                       <TableHeader 
+                          cols={['80px', '200px', '150px', '1fr', '100px']} 
+                          labels={['Image', 'Style Name', 'Difficulty', 'Description', 'Action']}
+                       />
                        <div className="divide-y divide-gray-50">
                          {styles.map(style => (
                            <div key={style.slug} className="grid gap-4 px-6 py-4 items-center hover:bg-gray-50 text-sm" style={{ gridTemplateColumns: '80px 200px 150px 1fr 100px' }}>
@@ -303,7 +307,10 @@ const AdminDashboard = () => {
                 <DashboardSection title="Schedule" description="Manage weekly timetable." onAdd={() => setModalType('schedule')}>
                    <div className="overflow-x-auto">
                      <div className="min-w-[800px]">
-                       <TableHeader cols={['120px', '120px', '200px', '150px', '1fr', '100px']} />
+                       <TableHeader 
+                          cols={['120px', '120px', '200px', '150px', '1fr', '100px']} 
+                          labels={['Day', 'Time', 'Class', 'Instructor', 'Location', 'Action']}
+                       />
                        <div className="divide-y divide-gray-50">
                          {scheduleData.map(session => (
                            <div key={session.id} className="grid gap-4 px-6 py-4 items-center hover:bg-gray-50 text-sm" style={{ gridTemplateColumns: '120px 120px 200px 150px 1fr 100px' }}>
@@ -328,7 +335,10 @@ const AdminDashboard = () => {
                 <DashboardSection title="Programs" description="Manage structured courses." onAdd={() => setModalType('programs')}>
                    <div className="overflow-x-auto">
                      <div className="min-w-[800px]">
-                       <TableHeader cols={['80px', '200px', '120px', '120px', '1fr', '100px']} />
+                       <TableHeader 
+                          cols={['80px', '200px', '120px', '120px', '1fr', '100px']} 
+                          labels={['Image', 'Title', 'Level', 'Price', 'Description', 'Action']}
+                       />
                        <div className="divide-y divide-gray-50">
                          {programs.map(prog => (
                            <div key={prog.slug} className="grid gap-4 px-6 py-4 items-center hover:bg-gray-50 text-sm" style={{ gridTemplateColumns: '80px 200px 120px 120px 1fr 100px' }}>
@@ -353,7 +363,10 @@ const AdminDashboard = () => {
                 <DashboardSection title="Pricing" description="Manage membership plans." onAdd={() => setModalType('pricing')}>
                    <div className="overflow-x-auto">
                      <div className="min-w-[800px]">
-                       <TableHeader cols={['200px', '150px', '150px', '1fr', '100px']} />
+                       <TableHeader 
+                          cols={['200px', '150px', '150px', '1fr', '100px']} 
+                          labels={['Plan Name', 'Price', 'Period', 'Benefits', 'Action']}
+                       />
                        <div className="divide-y divide-gray-50">
                          {pricingPlansData.map(plan => (
                            <div key={plan.id} className="grid gap-4 px-6 py-4 items-center hover:bg-gray-50 text-sm" style={{ gridTemplateColumns: '200px 150px 150px 1fr 100px' }}>
@@ -383,7 +396,10 @@ const AdminDashboard = () => {
                 <DashboardSection title="Feedback" description="Manage customer testimonials." onAdd={() => setModalType('feedback')}>
                    <div className="overflow-x-auto">
                      <div className="min-w-[800px]">
-                       <TableHeader cols={['60px', '180px', '150px', '1fr', '100px']} />
+                       <TableHeader 
+                          cols={['60px', '180px', '150px', '1fr', '100px']} 
+                          labels={['Image', 'Customer', 'Rating', 'Testimonial', 'Action']}
+                       />
                        <div className="divide-y divide-gray-50">
                          {feedback.map(item => (
                            <div key={item.id} className="grid gap-4 px-6 py-4 items-center hover:bg-gray-50 text-sm" style={{ gridTemplateColumns: '60px 180px 150px 1fr 100px' }}>
@@ -412,7 +428,10 @@ const AdminDashboard = () => {
                 <DashboardSection title="Blog" description="Manage articles and posts." onAdd={() => setModalType('blog')}>
                    <div className="overflow-x-auto">
                      <div className="min-w-[800px]">
-                       <TableHeader cols={['80px', '1fr', '120px', '100px', '100px']} />
+                       <TableHeader 
+                          cols={['80px', '1fr', '120px', '100px', '100px']} 
+                          labels={['Image', 'Title', 'Date', 'Status', 'Action']}
+                       />
                        <div className="divide-y divide-gray-50">
                          {blogPosts.map(post => (
                            <div key={post.id} className="grid gap-4 px-6 py-4 items-center hover:bg-gray-50 text-sm" style={{ gridTemplateColumns: '80px 1fr 120px 100px 100px' }}>
@@ -456,8 +475,12 @@ const AdminDashboard = () => {
                   }
                 >
                   <div className="overflow-x-auto">
-                    <div className="min-w-[800px]">
-                      <TableHeader cols={['40px', '120px', '160px', '120px', '1fr', '80px']} />
+                    <div className="min-w-[900px]">
+                      {/* Grid Layout: Checkbox | Date | Name | Email | Phone | Type | Message | Action */}
+                      <TableHeader 
+                          cols={['40px', '100px', '140px', '160px', '120px', '100px', '1fr', '50px']} 
+                          labels={['', 'Date', 'Name', 'Email', 'Phone', 'Type', 'Message', '']}
+                      />
                       <div className="divide-y divide-gray-50">
                         {inquiries.length === 0 ? (
                           <div className="p-20 text-center text-gray-400">
@@ -466,19 +489,47 @@ const AdminDashboard = () => {
                           </div>
                         ) : (
                           inquiries.map((inq) => (
-                            <div key={inq.id} className={`grid gap-4 px-6 py-4 items-center hover:bg-gray-50/80 transition-colors text-sm ${selectedInquiryIds.includes(inq.id) ? 'bg-sage-green/5' : ''}`} style={{ gridTemplateColumns: '40px 120px 160px 120px 1fr 80px' }}>
+                            <div 
+                              key={inq.id} 
+                              className={`grid gap-4 px-6 py-4 items-center hover:bg-gray-50/80 transition-colors text-sm ${selectedInquiryIds.includes(inq.id) ? 'bg-sage-green/5' : ''}`} 
+                              style={{ gridTemplateColumns: '40px 100px 140px 160px 120px 100px 1fr 50px' }}
+                            >
+                              {/* Checkbox */}
                               <button onClick={() => toggleInquirySelection(inq.id)} className="text-gray-400 hover:text-sage-green transition-colors">
                                 {selectedInquiryIds.includes(inq.id) ? <CheckSquare size={20} className="text-sage-green" /> : <Square size={20} />}
                               </button>
-                              <div className="text-gray-400 font-mono text-xs">{new Date(inq.created_at).toLocaleDateString()}</div>
-                              <div>
-                                <div className="font-bold text-gray-900">{inq.first_name} {inq.last_name}</div>
-                                <div className="text-xs text-gray-400">{inq.email}</div>
+                              
+                              {/* Date */}
+                              <div className="text-gray-500 font-mono text-xs">{new Date(inq.created_at).toLocaleDateString()}</div>
+                              
+                              {/* Name */}
+                              <div className="font-bold text-gray-900 truncate" title={`${inq.first_name} ${inq.last_name}`}>
+                                {inq.first_name} {inq.last_name}
                               </div>
-                              <div><span className="bg-gray-100 px-2 py-1 rounded text-[10px] font-black uppercase text-gray-500 tracking-tighter">{inq.inquiry_type || 'General'}</span></div>
-                              <div className="text-gray-600 line-clamp-2 italic text-xs">"{inq.message}"</div>
+                              
+                              {/* Email */}
+                              <div className="text-xs text-gray-500 truncate" title={inq.email}>{inq.email}</div>
+
+                              {/* Phone */}
+                              <div className="text-xs text-gray-500 truncate flex items-center gap-1" title={inq.phone_number}>
+                                {inq.phone_number ? <><Phone size={10} className="text-sage-green"/> {inq.phone_number}</> : '-'}
+                              </div>
+                              
+                              {/* Type */}
+                              <div>
+                                <span className="bg-gray-100 px-2 py-1 rounded text-[10px] font-black uppercase text-gray-500 tracking-tighter truncate block text-center">
+                                  {inq.inquiry_type || 'General'}
+                                </span>
+                              </div>
+                              
+                              {/* Message */}
+                              <div className="text-gray-600 line-clamp-2 italic text-xs" title={inq.message}>"{inq.message}"</div>
+                              
+                              {/* Action */}
                               <div className="flex justify-end gap-2">
-                                <button onClick={() => { if(window.confirm('Delete this message?')) { deleteInquiry(inq.id).then(fetchAllData); } }} className="p-2 text-gray-400 hover:text-red-500"><Trash2 size={16} /></button>
+                                <button onClick={() => { if(window.confirm('Delete this message?')) { deleteInquiry(inq.id).then(fetchAllData); } }} className="p-2 text-gray-400 hover:text-red-500 transition-colors">
+                                  <Trash2 size={16} />
+                                </button>
                               </div>
                             </div>
                           ))
