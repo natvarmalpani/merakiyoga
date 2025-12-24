@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from '../services/dataService.ts';
 import { supabase } from '../services/supabaseClient.ts';
@@ -22,14 +23,15 @@ import {
   Edit2,
   Trash2,
   Loader2,
-  Image as ImageIcon,
   Database,
   MessageSquare,
-  Upload,
-  Star,
-  Quote,
   ShieldCheck,
-  User as UserIcon
+  User as UserIcon,
+  CheckSquare,
+  Square,
+  Trash,
+  // Added Quote icon to imports
+  Quote
 } from 'lucide-react';
 // @ts-ignore
 import { motion as framerMotion, AnimatePresence } from 'framer-motion';
@@ -56,18 +58,21 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean; onClose:
   );
 };
 
-const DashboardSection = ({ title, description, onAdd, children, hideAddButton }: any) => (
+const DashboardSection = ({ title, description, onAdd, children, hideAddButton, bulkActions }: any) => (
   <div className="space-y-6">
     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
       <div className="text-left">
         <h2 className="font-serif text-2xl sm:text-3xl text-deep-green">{title}</h2>
         <p className="text-gray-500 text-sm mt-1">{description}</p>
       </div>
-      {!hideAddButton && (
-          <button onClick={onAdd} className="bg-sage-green text-white px-4 py-2.5 rounded-lg font-medium hover:bg-deep-green transition-all flex items-center gap-2 shadow-sm w-full sm:w-auto justify-center">
-            <Plus size={18} /> Add New
-          </button>
-      )}
+      <div className="flex items-center gap-3 w-full sm:w-auto">
+        {bulkActions}
+        {!hideAddButton && (
+            <button onClick={onAdd} className="bg-sage-green text-white px-4 py-2.5 rounded-lg font-medium hover:bg-deep-green transition-all flex items-center gap-2 shadow-sm w-full sm:w-auto justify-center">
+              <Plus size={18} /> Add New
+            </button>
+        )}
+      </div>
     </div>
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">{children}</div>
   </div>
@@ -78,11 +83,11 @@ const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('styles');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [modalType, setModalType] = useState<string | null>(null);
   const [editingItem, setEditingItem] = useState<any>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
 
+  // Data State
   const [styles, setStyles] = useState<YogaStyle[]>([]);
   const [scheduleData, setScheduleData] = useState<ClassSession[]>([]);
   const [inquiries, setInquiries] = useState<ContactInquiry[]>([]);
@@ -90,6 +95,9 @@ const AdminDashboard = () => {
   const [pricingPlansData, setPricingPlansData] = useState<PricingPlan[]>([]);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [feedback, setFeedback] = useState<CustomerFeedback[]>([]);
+
+  // Selection State
+  const [selectedInquiryIds, setSelectedInquiryIds] = useState<string[]>([]);
 
   useEffect(() => {
     const init = async () => {
@@ -121,6 +129,26 @@ const AdminDashboard = () => {
     }
   };
 
+  const toggleInquirySelection = (id: string) => {
+    setSelectedInquiryIds(prev => 
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  };
+
+  const handleBulkDeleteInquiries = async () => {
+    if (!window.confirm(`Delete ${selectedInquiryIds.length} messages permanently?`)) return;
+    setIsLoading(true);
+    try {
+      await Promise.all(selectedInquiryIds.map(id => deleteInquiry(id)));
+      await fetchAllData();
+      setSelectedInquiryIds([]);
+    } catch (err) {
+      alert("Error during bulk delete.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const navItems = [
     { id: 'styles', label: 'Yoga Styles', icon: <Leaf size={20} /> },
     { id: 'schedule', label: 'Schedule', icon: <Calendar size={20} /> },
@@ -133,7 +161,6 @@ const AdminDashboard = () => {
 
   const SidebarContent = ({ isMobile = false }) => (
     <div className="flex flex-col h-full bg-deep-green text-white">
-      {/* Sidebar Header */}
       <div className="p-6 border-b border-white/10 flex items-center justify-between shrink-0">
         <Link to="/" className="font-serif text-2xl font-bold flex items-center gap-2">
           <ShieldCheck size={28} className="text-sage-green" />
@@ -146,7 +173,6 @@ const AdminDashboard = () => {
         )}
       </div>
 
-      {/* Navigation Area - Fixed Scrollable behavior */}
       <nav className="flex-1 min-h-0 py-6 px-4 space-y-2 overflow-y-auto hide-scrollbar">
         {navItems.map(item => (
           <button 
@@ -159,9 +185,7 @@ const AdminDashboard = () => {
         ))}
       </nav>
 
-      {/* Footer Area - User Details & Logout */}
       <div className="shrink-0 border-t border-white/10 bg-black/20">
-        {/* User Details */}
         <div className="px-6 py-4 flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-sage-green/20 flex items-center justify-center text-sage-green font-bold text-sm border border-sage-green/10">
             {userEmail?.charAt(0).toUpperCase() || 'A'}
@@ -172,7 +196,6 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        {/* Logout Button */}
         <div className="p-4 pt-0 pb-6">
           <button 
             onClick={handleLogout} 
@@ -186,86 +209,112 @@ const AdminDashboard = () => {
   );
 
   const renderContent = () => {
-      const sectionProps = {
-          styles: { title: "Yoga Styles", desc: "Manage studio class types.", onAdd: () => setModalType('styles'), data: styles },
-          schedule: { title: "Schedule", desc: "Manage class timetable.", onAdd: () => setModalType('schedule'), data: scheduleData },
-          programs: { title: "Programs", desc: "Manage curated courses.", onAdd: () => setModalType('programs'), data: programs },
-          pricing: { title: "Pricing", desc: "Manage membership tiers.", onAdd: () => setModalType('pricing'), data: pricingPlansData },
-          feedback: { title: "Feedback", desc: "Manage student testimonials.", onAdd: () => setModalType('feedback'), data: feedback },
-          blog: { title: "Blog", desc: "Manage wellness articles.", onAdd: () => setModalType('blog'), data: blogPosts },
-          messages: { title: "Inquiries", desc: "Client messages.", hideAddButton: true, data: inquiries }
-      }[activeTab as keyof typeof sectionProps];
-
-      if (!sectionProps) return null;
-
-      return (
-          <DashboardSection {...sectionProps}>
-              <div className="p-12 text-center text-gray-400">
-                  <Database size={48} className="mx-auto mb-4 opacity-20" />
-                  <p>Content for {activeTab} section will be displayed here.</p>
-                  <p className="text-xs mt-2 italic">Database contains {sectionProps.data?.length || 0} items.</p>
-              </div>
-          </DashboardSection>
+      // Reusable table header with darker background
+      const TableHeader = ({ cols }: { cols: string[] }) => (
+        <div className="grid gap-4 px-6 py-4 bg-gray-100 border-b border-gray-200 font-bold text-xs uppercase tracking-widest text-gray-700" style={{ gridTemplateColumns: cols.join(' ') }}>
+          {cols.map((_, i) => <div key={i}>{_}</div>)}
+        </div>
       );
+
+      switch (activeTab) {
+          case 'messages':
+              return (
+                <DashboardSection 
+                  title="Inquiries" 
+                  description="Member messages and booking requests." 
+                  hideAddButton 
+                  bulkActions={
+                    selectedInquiryIds.length > 0 && (
+                      <button 
+                        onClick={handleBulkDeleteInquiries}
+                        className="bg-red-50 text-red-600 px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-red-100 border border-red-200 transition-all"
+                      >
+                        <Trash size={16} /> Delete ({selectedInquiryIds.length})
+                      </button>
+                    )
+                  }
+                >
+                  <div className="overflow-x-auto">
+                    <div className="min-w-[800px]">
+                      <TableHeader cols={['40px', '140px', '160px', '140px', '1fr', '80px']} />
+                      <div className="divide-y divide-gray-50">
+                        {inquiries.length === 0 ? (
+                          <div className="p-20 text-center text-gray-400">
+                            <MessageSquare size={48} className="mx-auto mb-4 opacity-20" />
+                            <p>No messages received yet.</p>
+                          </div>
+                        ) : (
+                          inquiries.map((inq) => (
+                            <div key={inq.id} className={`grid gap-4 px-6 py-4 items-center hover:bg-gray-50/80 transition-colors text-sm ${selectedInquiryIds.includes(inq.id) ? 'bg-sage-green/5' : ''}`} style={{ gridTemplateColumns: '40px 140px 160px 140px 1fr 80px' }}>
+                              <button onClick={() => toggleInquirySelection(inq.id)} className="text-gray-400 hover:text-sage-green transition-colors">
+                                {selectedInquiryIds.includes(inq.id) ? <CheckSquare size={20} className="text-sage-green" /> : <Square size={20} />}
+                              </button>
+                              <div className="text-gray-400 font-mono text-xs">{new Date(inq.created_at).toLocaleDateString()}</div>
+                              <div className="font-bold text-gray-900">{inq.first_name} {inq.last_name}</div>
+                              <div><span className="bg-gray-100 px-2 py-1 rounded text-[10px] font-black uppercase text-gray-500 tracking-tighter">{inq.inquiry_type || 'General'}</span></div>
+                              <div className="text-gray-600 line-clamp-2 italic">"{inq.message}"</div>
+                              <div className="flex justify-end gap-2">
+                                <button onClick={() => { if(window.confirm('Delete this message?')) { deleteInquiry(inq.id).then(fetchAllData); } }} className="p-2 text-gray-400 hover:text-red-500"><Trash2 size={16} /></button>
+                              </div>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </DashboardSection>
+              );
+          
+          default:
+            return (
+              <DashboardSection title={activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} description={`Manage your studio ${activeTab}.`}>
+                <div className="p-20 text-center text-gray-400">
+                    <Database size={48} className="mx-auto mb-4 opacity-20" />
+                    <p>Database management for {activeTab} will appear here.</p>
+                </div>
+              </DashboardSection>
+            );
+      }
   };
 
   if (isLoading) return <div className="min-h-screen bg-gray-50 flex items-center justify-center"><Loader2 className="animate-spin text-sage-green" size={48} /></div>;
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
-      
-      {/* Mobile Header */}
       <header className="md:hidden flex items-center justify-between px-6 py-4 bg-deep-green text-white fixed top-0 w-full z-[80] shadow-md h-[64px]">
         <button onClick={() => setIsSidebarOpen(true)} className="p-2 -ml-2 hover:bg-white/10 rounded-lg">
           <Menu size={24} />
         </button>
         <div className="font-serif text-xl font-bold tracking-tight">Meraki Admin</div>
-        <div className="w-8"></div> {/* Spacer */}
+        <div className="w-8"></div>
       </header>
 
-      {/* Desktop Sidebar */}
       <aside className="hidden md:block w-72 fixed inset-y-0 left-0 z-40 border-r border-gray-100 shadow-2xl overflow-hidden">
         <SidebarContent />
       </aside>
 
-      {/* Mobile Drawer */}
       <AnimatePresence>
         {isSidebarOpen && (
           <div className="md:hidden fixed inset-0 z-[100]">
-            <motion.div 
-              initial={{ opacity: 0 }} 
-              animate={{ opacity: 1 }} 
-              exit={{ opacity: 0 }} 
-              onClick={() => setIsSidebarOpen(false)} 
-              className="absolute inset-0 bg-black/80 backdrop-blur-sm" 
-            />
-            <motion.aside 
-              initial={{ x: -300 }} 
-              animate={{ x: 0 }} 
-              exit={{ x: -300 }} 
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="absolute top-0 left-0 w-[300px] h-full shadow-2xl overflow-hidden"
-            >
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsSidebarOpen(false)} className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+            <motion.aside initial={{ x: -300 }} animate={{ x: 0 }} exit={{ x: -300 }} transition={{ type: "spring", damping: 25, stiffness: 200 }} className="absolute top-0 left-0 w-[300px] h-full shadow-2xl overflow-hidden">
               <SidebarContent isMobile />
             </motion.aside>
           </div>
         )}
       </AnimatePresence>
 
-      {/* Main Content Area */}
       <main className="flex-1 md:ml-72 min-h-screen flex flex-col">
-        {/* Desktop Header */}
         <div className="hidden md:flex items-center justify-between px-10 py-5 bg-white border-b border-gray-100 sticky top-0 z-30">
             <h1 className="font-serif text-2xl text-deep-green capitalize">{activeTab}</h1>
             <div className="flex items-center gap-6">
                 <div className="flex items-center gap-3 bg-gray-50 px-4 py-2 rounded-full border border-gray-100">
                     <UserIcon size={16} className="text-sage-green" />
-                    <span className="text-sm font-medium text-gray-700">Administrator</span>
+                    <span className="text-sm font-medium text-gray-700">Studio Manager</span>
                 </div>
             </div>
         </div>
 
-        {/* Content Body */}
         <div className="flex-1 p-6 md:p-10 pt-24 md:pt-10">
             <div className="max-w-6xl mx-auto">
                 {renderContent()}
@@ -273,7 +322,6 @@ const AdminDashboard = () => {
         </div>
       </main>
 
-      {/* Form Modal Placeholder */}
       <Modal isOpen={!!modalType} onClose={() => setModalType(null)} title={`${editingItem ? 'Edit' : 'Add'} ${modalType}`}>
         <p className="text-gray-500 mb-6">Form fields for {modalType} will go here.</p>
         <div className="flex justify-end gap-3 pt-4 border-t">

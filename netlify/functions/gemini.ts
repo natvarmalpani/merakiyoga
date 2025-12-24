@@ -1,3 +1,4 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 //console.log("API_KEY exists:", !!process.env.API_KEY);
 
@@ -6,15 +7,16 @@ export const handler = async (event: any) => {
     return { statusCode: 405, body: "Method Not Allowed" };
   }
 
-  const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY;
-  if (!apiKey) {
+  // The API key must be obtained exclusively from the environment variable process.env.API_KEY.
+  if (!process.env.API_KEY) {
     return {
       statusCode: 500,
       body: JSON.stringify({ error: "Server configuration error: API Key missing" }),
     };
   }
 
-  const ai = new GoogleGenAI({ apiKey });
+  // Use the process.env.API_KEY string directly when initializing the @google/genai client instance
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const body = JSON.parse(event.body);
   const { action } = body;
 
