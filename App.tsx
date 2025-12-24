@@ -24,20 +24,27 @@ const Navbar = () => {
   const isDashboard = location.pathname.startsWith('/admin/dashboard');
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Close menu when navigating to a new page
   useEffect(() => {
     setIsOpen(false);
+  }, [location.pathname]);
+
+  // Handle body scroll locking when mobile menu is open
+  useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
     }
     return () => { document.body.style.overflow = 'unset'; };
-  }, [location.pathname, isOpen]);
+  }, [isOpen]);
 
   if (isDashboard) {
     return null;
@@ -55,88 +62,102 @@ const Navbar = () => {
     { name: 'Contact', path: '/contact' },
   ];
 
+  // When menu is open, the bar should always be solid to show the close button clearly
   const isSolid = scrolled || isOpen;
 
   return (
-    <nav className={`fixed w-full z-50 transition-all duration-500 ${isSolid ? 'bg-white/95 backdrop-blur-md shadow-sm py-2' : 'bg-transparent py-4'}`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center">
-          <Link to="/" className="flex flex-col items-start group">
-            <span className="font-serif text-2xl sm:text-3xl font-bold tracking-tight leading-none text-deep-green">
-              Meraki
-            </span>
-            <span className="font-sans text-[7px] tracking-[0.4em] font-bold uppercase mt-1 text-gray-400">
-              YOGA & HEALING STUDIO
-            </span>
-          </Link>
+    <>
+      <nav className={`fixed w-full z-[100] transition-all duration-300 ${isSolid ? 'bg-white shadow-sm py-2' : 'bg-transparent py-4'}`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-12">
+            <Link to="/" className="flex flex-col items-start group">
+              <span className={`font-serif text-2xl sm:text-3xl font-bold tracking-tight leading-none transition-colors ${!isSolid ? 'text-deep-green' : 'text-deep-green'}`}>
+                Meraki
+              </span>
+              <span className="font-sans text-[7px] tracking-[0.4em] font-bold uppercase mt-1 text-gray-400">
+                YOGA & HEALING STUDIO
+              </span>
+            </Link>
 
-          {/* Desktop Menu */}
-          <div className="hidden lg:flex items-center space-x-6 xl:space-x-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                to={link.path}
-                className={`text-sm font-medium transition-colors hover:text-sage-green ${
-                  location.pathname === link.path ? 'text-sage-green underline underline-offset-4 decoration-2' : 'text-gray-700'
+            {/* Desktop Menu */}
+            <div className="hidden lg:flex items-center space-x-6 xl:space-x-8">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  to={link.path}
+                  className={`text-sm font-medium transition-colors hover:text-sage-green ${
+                    location.pathname === link.path ? 'text-sage-green underline underline-offset-4 decoration-2' : 'text-gray-700'
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              ))}
+              <Link 
+                to="/admin"
+                className={`text-sm font-medium transition-all flex items-center gap-2 px-3 py-1.5 rounded-lg border ${
+                  location.pathname === '/admin' 
+                    ? 'bg-deep-green text-white border-deep-green' 
+                    : 'text-gray-500 border-gray-200 hover:border-sage-green hover:text-sage-green'
                 }`}
               >
-                {link.name}
+                <Lock size={14} /> 
+                <span>Admin</span>
               </Link>
-            ))}
-            <Link 
-              to="/admin"
-              className={`text-sm font-medium transition-all flex items-center gap-2 px-3 py-1.5 rounded-lg border ${
-                location.pathname === '/admin' 
-                  ? 'bg-deep-green text-white border-deep-green' 
-                  : 'text-gray-500 border-gray-200 hover:border-sage-green hover:text-sage-green'
-              }`}
-            >
-              <Lock size={14} /> 
-              <span>Admin</span>
-            </Link>
-          </div>
+            </div>
 
-          {/* Mobile/Tablet Menu Button */}
-          <div className="lg:hidden">
-            <button 
-                type="button"
-                onClick={() => setIsOpen(!isOpen)} 
-                className="p-2 -mr-2 text-gray-700 hover:text-sage-green transition-colors focus:outline-none"
-                aria-label={isOpen ? "Close menu" : "Open menu"}
-            >
-              {isOpen ? <X size={28} /> : <Menu size={28} />}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Menu Overlay */}
-      {isOpen && (
-        <div className="lg:hidden fixed inset-0 top-[60px] bg-white z-50 overflow-y-auto">
-          <div className="py-8 px-8 space-y-6">
-            {navLinks.map((link) => (
-                <Link
-                key={link.name}
-                to={link.path}
-                className={`block text-2xl font-serif font-medium transition-colors ${
-                    location.pathname === link.path ? 'text-sage-green' : 'text-gray-800'
-                }`}
-                >
-                {link.name}
-                </Link>
-            ))}
-            <div className="border-t border-gray-100 pt-6 mt-4">
-                <Link 
-                to="/admin" 
-                className="flex items-center gap-2 text-gray-500 hover:text-deep-green font-medium text-lg"
-                >
-                <Lock size={20} /> Admin Login
-                </Link>
+            {/* Mobile/Tablet Menu Button */}
+            <div className="lg:hidden flex items-center">
+              <button 
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsOpen(!isOpen);
+                  }} 
+                  className="p-2 text-deep-green hover:text-sage-green transition-colors focus:outline-none z-[110]"
+                  aria-expanded={isOpen}
+                  aria-label={isOpen ? "Close menu" : "Open menu"}
+              >
+                {isOpen ? <X size={32} /> : <Menu size={32} />}
+              </button>
             </div>
           </div>
         </div>
-      )}
-    </nav>
+      </nav>
+
+      {/* Mobile Menu Overlay - Moved outside nav for cleaner stacking */}
+      <div 
+        className={`lg:hidden fixed inset-0 z-[90] bg-white transition-transform duration-300 ease-in-out transform ${isOpen ? 'translate-y-0' : '-translate-y-full'}`}
+        style={{ paddingTop: '80px' }}
+      >
+        <div className="h-full overflow-y-auto px-8 pb-12 flex flex-col">
+          <div className="space-y-6 flex-grow">
+            {navLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  to={link.path}
+                  className={`block text-3xl font-serif font-medium transition-colors ${
+                      location.pathname === link.path ? 'text-sage-green' : 'text-gray-800'
+                  }`}
+                >
+                  {link.name}
+                </Link>
+            ))}
+          </div>
+          <div className="border-t border-gray-100 pt-8 mt-auto">
+              <Link 
+                to="/admin" 
+                className="flex items-center gap-3 text-gray-500 hover:text-deep-green font-medium text-xl"
+              >
+                <Lock size={24} /> Admin Login
+              </Link>
+              <div className="flex gap-6 mt-8">
+                <a href="#" className="text-gray-400 hover:text-sage-green transition-colors"><Instagram size={24} /></a>
+                <a href="#" className="text-gray-400 hover:text-sage-green transition-colors"><Facebook size={24} /></a>
+              </div>
+          </div>
+        </div>
+      </div>
+    </>
   );
 };
 
