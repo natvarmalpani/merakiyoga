@@ -58,7 +58,7 @@ const Navbar = () => {
   const isSolid = scrolled || isOpen;
 
   return (
-    <nav className={`fixed w-full z-50 transition-all duration-300 ${isSolid ? 'bg-white/95 backdrop-blur-md shadow-sm py-2' : 'bg-transparent py-4'}`}>
+    <nav className={`fixed w-full z-50 transition-all duration-500 ${isSolid ? 'bg-white/95 backdrop-blur-md shadow-sm py-2' : 'bg-transparent py-4'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
           <Link to="/" className="flex flex-col items-start group">
@@ -211,29 +211,30 @@ const Footer = () => {
 };
 
 const App = () => {
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
+
   return (
-    <Router>
-      <div className="flex flex-col min-h-screen">
-        <Navbar />
-        <main className="flex-grow pt-[60px] lg:pt-[80px]">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/styles" element={<Styles />} />
-            <Route path="/programs" element={<Programs />} />
-            <Route path="/schedule" element={<Schedule />} />
-            <Route path="/pricing" element={<Pricing />} />
-            <Route path="/knowledge-center" element={<KnowledgeCenter />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/:slug" element={<BlogPost />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/admin" element={<AdminLogin />} />
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          </Routes>
-        </main>
-        <Footer />
-      </div>
-    </Router>
+    <div className="flex flex-col min-h-screen">
+      <Navbar />
+      <main className={`flex-grow ${isHomePage ? 'pt-0' : 'pt-[60px] lg:pt-[80px]'}`}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/styles" element={<Styles />} />
+          <Route path="/programs" element={<Programs />} />
+          <Route path="/schedule" element={<Schedule />} />
+          <Route path="/pricing" element={<Pricing />} />
+          <Route path="/knowledge-center" element={<KnowledgeCenter />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:slug" element={<BlogPost />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/admin" element={<AdminLogin />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        </Routes>
+      </main>
+      <Footer />
+    </div>
   );
 };
 

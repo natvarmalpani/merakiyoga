@@ -27,71 +27,74 @@ const Home = () => {
   return (
     <div className="overflow-x-hidden">
       {/* Hero Section */}
-      <section 
-        className="relative min-h-[85vh] md:h-screen flex items-center justify-center overflow-hidden bg-warm-white"
-        style={{
-          backgroundImage: `url(${heroImageUrl})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center 40%',
-          backgroundRepeat: 'no-repeat',
-          backgroundAttachment: typeof window !== 'undefined' && window.innerWidth > 1024 ? 'fixed' : 'scroll'
-        }}
-      >
-        <div className="absolute inset-0 bg-white/30 md:bg-white/10 z-0"></div>
-        <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-warm-white/100 z-0"></div>
-        
-        <div className="relative z-10 text-center max-w-5xl px-4 sm:px-6 pt-10 md:pt-0">
-          <motion.div
-            initial={{ opacity: 0.01, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, ease: "easeOut" }}
-            className="flex flex-col items-center"
-          >
-            <h1 className="font-serif text-4xl sm:text-6xl md:text-8xl lg:text-9xl text-deep-green leading-tight mb-0 tracking-tight drop-shadow-sm">
-              Find Your Inner
-            </h1>
-            <h1 className="font-serif text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] italic text-deep-green/90 font-normal leading-none mb-10 drop-shadow-sm">
-              Sanctuary
-            </h1>
-          </motion.div>
-
-          <motion.p 
-            initial={{ opacity: 0.01, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, delay: 0.3, ease: "easeOut" }}
-            className="text-base sm:text-lg md:text-2xl text-deep-green/80 mb-10 max-w-2xl mx-auto leading-relaxed font-light"
-          >
-            Join a community dedicated to <span className="font-semibold text-deep-green">mindful</span> movement, breathwork, and holistic wellness in the heart of Navalur.
-          </motion.p>
-
-          <motion.div 
-            initial={{ opacity: 0.01, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, delay: 0.6, ease: "easeOut" }}
-            className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full max-w-sm sm:max-w-md mx-auto"
-          >
-            <Link 
-              to="/schedule" 
-              className="w-full sm:w-auto bg-sage-green text-white py-3.5 px-8 sm:px-10 rounded-full hover:bg-deep-green transition-all duration-500 font-medium text-base sm:text-lg flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+      <section className="relative h-screen flex items-center justify-center overflow-hidden bg-warm-white p-4 md:p-6 lg:p-8">
+        {/* The "Set Border" Frame */}
+        <div 
+          className="relative w-full h-full rounded-[2rem] md:rounded-[3rem] overflow-hidden flex items-center justify-center shadow-2xl"
+          style={{
+            backgroundImage: `url(${heroImageUrl})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+          }}
+        >
+          {/* Overlays for readability */}
+          <div className="absolute inset-0 bg-white/10 md:bg-transparent z-0"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-warm-white/20 z-0"></div>
+          
+          <div className="relative z-10 text-center max-w-5xl px-4 sm:px-6 pt-20 md:pt-0">
+            <motion.div
+              initial={{ opacity: 0.01, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1.2, ease: "easeOut" }}
+              className="flex flex-col items-center"
             >
-              Book a Class <ArrowRight size={20} />
-            </Link>
-            <Link 
-              to="/knowledge-center" 
-              className="w-full sm:w-auto bg-white/80 backdrop-blur-sm text-deep-green border border-gray-200 py-3.5 px-8 sm:px-10 rounded-full hover:bg-white transition-all duration-500 font-medium text-base sm:text-lg flex items-center justify-center shadow-md hover:shadow-lg transform hover:-translate-y-1"
+              <h1 className="font-serif text-4xl sm:text-6xl md:text-8xl lg:text-9xl text-deep-green leading-tight mb-0 tracking-tight drop-shadow-md">
+                Find Your Inner
+              </h1>
+              <h1 className="font-serif text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] italic text-deep-green/90 font-normal leading-none mb-10 drop-shadow-md">
+                Sanctuary
+              </h1>
+            </motion.div>
+
+            <motion.p 
+              initial={{ opacity: 0.01, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1.2, delay: 0.3, ease: "easeOut" }}
+              className="text-base sm:text-lg md:text-2xl text-deep-green mb-10 max-w-2xl mx-auto leading-relaxed font-normal bg-white/20 backdrop-blur-sm md:bg-transparent rounded-2xl p-4 md:p-0 shadow-sm md:shadow-none"
             >
-              AI Studio
-            </Link>
-          </motion.div>
+              Join a community dedicated to <span className="font-semibold text-deep-green">mindful</span> movement, breathwork, and holistic wellness in the heart of Navalur.
+            </motion.p>
+
+            <motion.div 
+              initial={{ opacity: 0.01, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1.2, delay: 0.6, ease: "easeOut" }}
+              className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full max-w-sm sm:max-w-md mx-auto"
+            >
+              <Link 
+                to="/schedule" 
+                className="w-full sm:w-auto bg-sage-green text-white py-3.5 px-8 sm:px-10 rounded-full hover:bg-deep-green transition-all duration-500 font-medium text-base sm:text-lg flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+              >
+                Book a Class <ArrowRight size={20} />
+              </Link>
+              <Link 
+                to="/knowledge-center" 
+                className="w-full sm:w-auto bg-white/80 backdrop-blur-sm text-deep-green border border-gray-200 py-3.5 px-8 sm:px-10 rounded-full hover:bg-white transition-all duration-500 font-medium text-base sm:text-lg flex items-center justify-center shadow-md hover:shadow-lg transform hover:-translate-y-1"
+              >
+                AI Studio
+              </Link>
+            </motion.div>
+          </div>
         </div>
 
         {/* Floating Scroll Indicator */}
         <motion.div 
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 2, repeat: Infinity }}
-          className="absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2 text-deep-green/40"
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2 text-deep-green/40 pointer-events-none"
         >
-          <span className="text-[10px] uppercase tracking-[0.3em] font-bold">Scroll</span>
+          <span className="text-[10px] uppercase tracking-[0.3em] font-bold">Explore</span>
           <div className="w-[1px] h-12 bg-gradient-to-b from-deep-green/40 to-transparent"></div>
         </motion.div>
       </section>
