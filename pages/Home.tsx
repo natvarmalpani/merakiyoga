@@ -26,11 +26,11 @@ const Home = () => {
 
   return (
     <div className="overflow-x-hidden">
-      {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden bg-warm-white p-4 md:p-6 lg:p-8">
+      {/* Hero Section - Height adjusted to account for Navbar offset in App.tsx */}
+      <section className="relative min-h-[calc(100vh-60px)] lg:min-h-[calc(100vh-80px)] flex items-center justify-center overflow-hidden bg-warm-white p-4 md:p-6 lg:p-8">
         {/* The "Set Border" Frame */}
         <div 
-          className="relative w-full h-full rounded-[2rem] md:rounded-[3rem] overflow-hidden flex items-center justify-center shadow-2xl"
+          className="relative w-full h-full min-h-[70vh] rounded-[2rem] md:rounded-[3rem] overflow-hidden flex items-center justify-center shadow-2xl"
           style={{
             backgroundImage: `url(${heroImageUrl})`,
             backgroundSize: 'cover',
@@ -42,7 +42,7 @@ const Home = () => {
           <div className="absolute inset-0 bg-white/10 md:bg-transparent z-0"></div>
           <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-warm-white/20 z-0"></div>
           
-          <div className="relative z-10 text-center max-w-5xl px-4 sm:px-6 pt-20 md:pt-0">
+          <div className="relative z-10 text-center max-w-5xl px-4 sm:px-6 py-12 md:py-20">
             <motion.div
               initial={{ opacity: 0.01, y: 30 }}
               animate={{ opacity: 1, y: 0 }}

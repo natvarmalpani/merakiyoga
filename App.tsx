@@ -211,13 +211,11 @@ const Footer = () => {
 };
 
 const App = () => {
-  const location = useLocation();
-  const isHomePage = location.pathname === '/';
-
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
-      <main className={`flex-grow ${isHomePage ? 'pt-0' : 'pt-[60px] lg:pt-[80px]'}`}>
+      {/* Universal padding-top to account for the fixed navbar height */}
+      <main className="flex-grow pt-[60px] lg:pt-[80px]">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
