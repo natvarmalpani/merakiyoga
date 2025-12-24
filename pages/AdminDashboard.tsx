@@ -28,7 +28,8 @@ import {
   Upload,
   Star,
   Quote,
-  ShieldCheck
+  ShieldCheck,
+  User as UserIcon
 } from 'lucide-react';
 // @ts-ignore
 import { motion as framerMotion, AnimatePresence } from 'framer-motion';
@@ -80,9 +81,7 @@ const AdminDashboard = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [modalType, setModalType] = useState<string | null>(null);
   const [editingItem, setEditingItem] = useState<any>(null);
-  const [formData, setFormData] = useState<any>({});
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
 
   const [styles, setStyles] = useState<YogaStyle[]>([]);
   const [scheduleData, setScheduleData] = useState<ClassSession[]>([]);
@@ -96,6 +95,7 @@ const AdminDashboard = () => {
     const init = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) { navigate('/admin'); return; }
+      setUserEmail(session.user.email || 'Admin User');
       try { await fetchAllData(); } catch (error) { console.error(error); } finally { setIsLoading(false); }
     };
     init();
@@ -146,8 +146,8 @@ const AdminDashboard = () => {
         )}
       </div>
 
-      {/* Navigation Area - Scrollable */}
-      <nav className="flex-1 py-6 px-4 space-y-2 overflow-y-auto hide-scrollbar">
+      {/* Navigation Area - Fixed Scrollable behavior */}
+      <nav className="flex-1 min-h-0 py-6 px-4 space-y-2 overflow-y-auto hide-scrollbar">
         {navItems.map(item => (
           <button 
             key={item.id} 
@@ -159,14 +159,28 @@ const AdminDashboard = () => {
         ))}
       </nav>
 
-      {/* Pinned Logout Button Section - Fixed at bottom */}
-      <div className="p-6 border-t border-white/10 bg-black/10 shrink-0">
-        <button 
-          onClick={handleLogout} 
-          className="w-full flex items-center justify-center gap-3 px-4 py-3.5 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-all shadow-lg active:scale-95 border border-red-500/50"
-        >
-          <LogOut size={20} /> <span>LOG OUT</span>
-        </button>
+      {/* Footer Area - User Details & Logout */}
+      <div className="shrink-0 border-t border-white/10 bg-black/20">
+        {/* User Details */}
+        <div className="px-6 py-4 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-sage-green/20 flex items-center justify-center text-sage-green font-bold text-sm border border-sage-green/10">
+            {userEmail?.charAt(0).toUpperCase() || 'A'}
+          </div>
+          <div className="flex-1 min-w-0 overflow-hidden text-left">
+            <p className="text-xs font-bold text-sage-green uppercase tracking-widest truncate">Logged in as</p>
+            <p className="text-sm font-medium text-white/80 truncate">{userEmail}</p>
+          </div>
+        </div>
+
+        {/* Logout Button */}
+        <div className="p-4 pt-0 pb-6">
+          <button 
+            onClick={handleLogout} 
+            className="w-full flex items-center justify-center gap-3 px-4 py-3.5 text-xs font-black text-white bg-red-600/90 hover:bg-red-600 rounded-xl transition-all shadow-lg active:scale-95 border border-red-500/30 uppercase tracking-[0.2em]"
+          >
+            <LogOut size={18} /> <span>LOG OUT</span>
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -200,19 +214,17 @@ const AdminDashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
       
-      {/* Mobile Header (Hidden on Laptop/Desktop) */}
+      {/* Mobile Header */}
       <header className="md:hidden flex items-center justify-between px-6 py-4 bg-deep-green text-white fixed top-0 w-full z-[80] shadow-md h-[64px]">
         <button onClick={() => setIsSidebarOpen(true)} className="p-2 -ml-2 hover:bg-white/10 rounded-lg">
           <Menu size={24} />
         </button>
         <div className="font-serif text-xl font-bold tracking-tight">Meraki Admin</div>
-        <button onClick={handleLogout} className="p-2 -mr-2 text-red-400 hover:text-red-300">
-          <LogOut size={24} />
-        </button>
+        <div className="w-8"></div> {/* Spacer */}
       </header>
 
-      {/* Persistent Desktop Sidebar */}
-      <aside className="hidden md:block w-72 fixed inset-y-0 left-0 z-40 border-r border-gray-100 shadow-2xl">
+      {/* Desktop Sidebar */}
+      <aside className="hidden md:block w-72 fixed inset-y-0 left-0 z-40 border-r border-gray-100 shadow-2xl overflow-hidden">
         <SidebarContent />
       </aside>
 
@@ -232,7 +244,7 @@ const AdminDashboard = () => {
               animate={{ x: 0 }} 
               exit={{ x: -300 }} 
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="absolute top-0 left-0 w-[300px] h-full shadow-2xl"
+              className="absolute top-0 left-0 w-[300px] h-full shadow-2xl overflow-hidden"
             >
               <SidebarContent isMobile />
             </motion.aside>
@@ -242,20 +254,14 @@ const AdminDashboard = () => {
 
       {/* Main Content Area */}
       <main className="flex-1 md:ml-72 min-h-screen flex flex-col">
-        {/* Desktop Header - Secondary Logout & Profile */}
+        {/* Desktop Header */}
         <div className="hidden md:flex items-center justify-between px-10 py-5 bg-white border-b border-gray-100 sticky top-0 z-30">
             <h1 className="font-serif text-2xl text-deep-green capitalize">{activeTab}</h1>
             <div className="flex items-center gap-6">
                 <div className="flex items-center gap-3 bg-gray-50 px-4 py-2 rounded-full border border-gray-100">
-                    <div className="w-8 h-8 rounded-full bg-sage-green/20 flex items-center justify-center text-sage-green font-bold text-xs">A</div>
+                    <UserIcon size={16} className="text-sage-green" />
                     <span className="text-sm font-medium text-gray-700">Administrator</span>
                 </div>
-                <button 
-                  onClick={handleLogout} 
-                  className="flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-red-600 hover:bg-red-50 rounded-full transition-all border border-red-100 shadow-sm"
-                >
-                  <LogOut size={18} /> Logout
-                </button>
             </div>
         </div>
 
@@ -267,7 +273,7 @@ const AdminDashboard = () => {
         </div>
       </main>
 
-      {/* Form Modal (Placeholder structure) */}
+      {/* Form Modal Placeholder */}
       <Modal isOpen={!!modalType} onClose={() => setModalType(null)} title={`${editingItem ? 'Edit' : 'Add'} ${modalType}`}>
         <p className="text-gray-500 mb-6">Form fields for {modalType} will go here.</p>
         <div className="flex justify-end gap-3 pt-4 border-t">
