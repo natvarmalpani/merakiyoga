@@ -35,9 +35,20 @@ import {
   Eye,
   Phone
 } from 'lucide-react';
+
 // @ts-ignore
-import { motion as framerMotion, AnimatePresence } from 'framer-motion';
-const motion = framerMotion as any;
+import * as framerMotion from 'framer-motion';
+
+// Robust fallback for framer-motion to prevent crashes if CDN fails
+const motion = (framerMotion as any).motion || {
+  div: ({ children, className, style, onClick, initial, animate, exit }: any) => (
+    <div className={className} style={style} onClick={onClick}>{children}</div>
+  ),
+  aside: ({ children, className, initial, animate, exit }: any) => (
+    <aside className={className}>{children}</aside>
+  )
+};
+const AnimatePresence = (framerMotion as any).AnimatePresence || (({ children }: any) => <>{children}</>);
 
 const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean; onClose: () => void; title: string; children?: React.ReactNode }) => {
   if (!isOpen) return null;
@@ -47,7 +58,7 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean; onClose:
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        onClick={e => e.stopPropagation()}
+        onClick={(e: any) => e.stopPropagation()}
         className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
       >
         <div className="flex justify-between items-center p-5 sm:p-6 border-b border-gray-100 sticky top-0 bg-white z-10">
@@ -77,6 +88,13 @@ const DashboardSection = ({ title, description, onAdd, children, hideAddButton, 
       </div>
     </div>
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">{children}</div>
+  </div>
+);
+
+// Reusable Table Header Component
+const TableHeader = ({ cols, labels }: { cols: string[], labels: string[] }) => (
+  <div className="grid gap-4 px-6 py-4 bg-gray-800 border-b border-gray-700 font-bold text-xs uppercase tracking-widest text-gray-200" style={{ gridTemplateColumns: cols.join(' ') }}>
+    {labels.map((label, i) => <div key={i}>{label}</div>)}
   </div>
 );
 
@@ -263,13 +281,6 @@ const AdminDashboard = () => {
   );
 
   const renderContent = () => {
-      // Updated TableHeader to use darker background (bg-gray-800) and lighter text (text-gray-200)
-      const TableHeader = ({ cols, labels }: { cols: string[], labels: string[] }) => (
-        <div className="grid gap-4 px-6 py-4 bg-gray-800 border-b border-gray-700 font-bold text-xs uppercase tracking-widest text-gray-200" style={{ gridTemplateColumns: cols.join(' ') }}>
-          {labels.map((label, i) => <div key={i}>{label}</div>)}
-        </div>
-      );
-
       switch (activeTab) {
           case 'styles':
               return (

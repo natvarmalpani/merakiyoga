@@ -9,7 +9,7 @@ import { CustomerFeedback } from '../types.ts';
 // Robust motion component fallback
 const motion = (framerMotion as any).motion || {
   div: ({ children, className, style }: any) => <div className={className} style={style}>{children}</div>,
-  p: ({ children, className, style }: any) => <p className={className} style={style}>{children}</p>,
+  p: ({ children, className, style }: any) => <p className={className} style={style}>{children} </p>,
   h1: ({ children, className, style }: any) => <h1 className={className} style={style}>{children}</h1>,
   h2: ({ children, className, style }: any) => <h2 className={className} style={style}>{children}</h2>
 };
@@ -29,7 +29,7 @@ const Home = () => {
     fetchTestimonials();
   }, []);
 
-  const heroImageUrl = "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=2400&auto=format&fit=crop";
+  const heroImageUrl = "https://images.unsplash.com/photo-1603988363607-e1e4a66962c6?q=80&w=2400&auto=format&fit=crop";
 
   return (
     <div className="w-full flex flex-col bg-warm-white">
