@@ -21,7 +21,7 @@ const Navbar = () => {
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
   
-  const isHidden = location.pathname.startsWith('/admin/dashboard');
+  const isDashboard = location.pathname.startsWith('/admin/dashboard');
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -39,7 +39,7 @@ const Navbar = () => {
     return () => { document.body.style.overflow = 'unset'; };
   }, [location.pathname, isOpen]);
 
-  if (isHidden) {
+  if (isDashboard) {
     return null;
   }
 
@@ -77,7 +77,7 @@ const Navbar = () => {
                 key={link.name}
                 to={link.path}
                 className={`text-sm font-medium transition-colors hover:text-sage-green ${
-                  location.pathname === link.path ? 'text-sage-green' : 'text-gray-700'
+                  location.pathname === link.path ? 'text-sage-green underline underline-offset-4 decoration-2' : 'text-gray-700'
                 }`}
               >
                 {link.name}
@@ -85,11 +85,14 @@ const Navbar = () => {
             ))}
             <Link 
               to="/admin"
-              className={`text-sm font-medium transition-colors flex items-center gap-1 ${
-                location.pathname === '/admin' ? 'text-sage-green' : 'text-gray-400 hover:text-deep-green'
+              className={`text-sm font-medium transition-all flex items-center gap-2 px-3 py-1.5 rounded-lg border ${
+                location.pathname === '/admin' 
+                  ? 'bg-deep-green text-white border-deep-green' 
+                  : 'text-gray-500 border-gray-200 hover:border-sage-green hover:text-sage-green'
               }`}
             >
               <Lock size={14} /> 
+              <span>Admin</span>
             </Link>
           </div>
 
@@ -212,27 +215,29 @@ const Footer = () => {
 
 const App = () => {
   return (
-    <div className="flex flex-col min-h-screen">
-      <Navbar />
-      {/* Universal padding-top to account for the fixed navbar height */}
-      <main className="flex-grow pt-[60px] lg:pt-[80px]">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/styles" element={<Styles />} />
-          <Route path="/programs" element={<Programs />} />
-          <Route path="/schedule" element={<Schedule />} />
-          <Route path="/pricing" element={<Pricing />} />
-          <Route path="/knowledge-center" element={<KnowledgeCenter />} />
-          <Route path="/blog" element={<Blog />} />
-          <Route path="/blog/:slug" element={<BlogPost />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/admin" element={<AdminLogin />} />
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        </Routes>
-      </main>
-      <Footer />
-    </div>
+    <Router>
+      <div className="flex flex-col min-h-screen">
+        <Navbar />
+        {/* Universal padding-top to account for the fixed navbar height */}
+        <main className="flex-grow pt-[60px] lg:pt-[80px]">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/styles" element={<Styles />} />
+            <Route path="/programs" element={<Programs />} />
+            <Route path="/schedule" element={<Schedule />} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/knowledge-center" element={<KnowledgeCenter />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:slug" element={<BlogPost />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/admin" element={<AdminLogin />} />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    </Router>
   );
 };
 
