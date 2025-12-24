@@ -1,12 +1,12 @@
 import { AIRoutineResponse } from "../types.ts";
 
 /**
- * Client-side bridge to Netlify Functions.
+ * Client-side bridge to Vercel Serverless Functions.
  * This keeps the API Key entirely on the server.
  */
 async function callGeminiFunction(payload: any) {
   try {
-    const response = await fetch("/.netlify/functions/gemini", {
+    const response = await fetch("/api/gemini", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
