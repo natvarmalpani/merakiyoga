@@ -263,9 +263,9 @@ const AdminDashboard = () => {
   );
 
   const renderContent = () => {
-      // Updated TableHeader to accept text labels instead of just widths
+      // Updated TableHeader to use darker background (bg-gray-800) and lighter text (text-gray-200)
       const TableHeader = ({ cols, labels }: { cols: string[], labels: string[] }) => (
-        <div className="grid gap-4 px-6 py-4 bg-gray-200 border-b border-gray-300 font-bold text-xs uppercase tracking-widest text-gray-800" style={{ gridTemplateColumns: cols.join(' ') }}>
+        <div className="grid gap-4 px-6 py-4 bg-gray-800 border-b border-gray-700 font-bold text-xs uppercase tracking-widest text-gray-200" style={{ gridTemplateColumns: cols.join(' ') }}>
           {labels.map((label, i) => <div key={i}>{label}</div>)}
         </div>
       );
