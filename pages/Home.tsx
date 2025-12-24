@@ -136,7 +136,7 @@ const Home = () => {
                                     <Star key={i} size={18} fill={i < item.rating ? "currentColor" : "none"} className={i >= item.rating ? "text-gray-100" : ""} />
                                 ))}
                             </div>
-                            <p className="text-gray-700 italic mb-8 md:mb-10 text-lg md:text-xl leading-relaxed flex-grow font-serif">"{item.quote}"</p>
+                            <p className="text-gray-600 leading-relaxed text-base md:text-lg mb-8 md:mb-10 flex-grow font-sans">"{item.quote}"</p>
                             <div className="flex items-center gap-4 pt-6 border-t border-gray-50">
                                 <div className="w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden bg-gray-100 flex-shrink-0 border-2 border-warm-white shadow-sm">
                                     {item.image ? (
@@ -155,7 +155,7 @@ const Home = () => {
                 </div>
             ) : (
                  <div className="text-center text-gray-400 py-10">
-                     <p className="font-serif italic text-xl md:text-2xl">Our community stories are blooming soon...</p>
+                     <p className="text-gray-500 leading-relaxed text-base md:text-lg">Our community stories are blooming soon...</p>
                  </div>
             )}
         </div>

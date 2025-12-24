@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from '../services/dataService.ts';
 import { supabase } from '../services/supabaseClient.ts';
@@ -89,7 +90,8 @@ const EmptyState = ({ message }: { message: string }) => (
   </div>
 );
 
-const TableWrapper = ({ children }: { children: React.ReactNode }) => (
+// Added optional question mark to children to resolve TypeScript missing property error
+const TableWrapper = ({ children }: { children?: React.ReactNode }) => (
     <div className="overflow-x-auto w-full scrollbar-thin scrollbar-thumb-gray-200">
         <div className="inline-block min-w-full align-middle">
             {children}
