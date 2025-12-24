@@ -27,16 +27,14 @@ const Navbar = () => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close menu when navigating to a new page
   useEffect(() => {
     setIsOpen(false);
   }, [location.pathname]);
 
-  // Handle body scroll locking when mobile menu is open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -46,9 +44,7 @@ const Navbar = () => {
     return () => { document.body.style.overflow = 'unset'; };
   }, [isOpen]);
 
-  if (isDashboard) {
-    return null;
-  }
+  if (isDashboard) return null;
 
   const navLinks = [
     { name: 'Home', path: '/' },
@@ -62,98 +58,99 @@ const Navbar = () => {
     { name: 'Contact', path: '/contact' },
   ];
 
-  // When menu is open, the bar should always be solid to show the close button clearly
-  const isSolid = scrolled || isOpen;
+  // More robust home page detection
+  const isHomePage = location.pathname === '/' || location.pathname === '' || location.pathname.endsWith('/index.html');
+  const isSolid = scrolled || isOpen || !isHomePage;
 
   return (
     <>
-      <nav className={`fixed w-full z-[100] transition-all duration-300 ${isSolid ? 'bg-white shadow-sm py-2' : 'bg-transparent py-4'}`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-12">
+      <nav className={`fixed w-full z-[100] transition-all duration-500 ${isSolid ? 'bg-white shadow-xl py-4' : 'bg-transparent py-6'}`}>
+        <div className="max-w-7xl mx-auto px-6 lg:px-10">
+          <div className="flex justify-between items-center h-10">
             <Link to="/" className="flex flex-col items-start group">
-              <span className={`font-serif text-2xl sm:text-3xl font-bold tracking-tight leading-none transition-colors ${!isSolid ? 'text-deep-green' : 'text-deep-green'}`}>
+              <span className={`font-serif text-2xl sm:text-3xl font-bold tracking-tight leading-none transition-colors text-deep-green`}>
                 Meraki
               </span>
-              <span className="font-sans text-[7px] tracking-[0.4em] font-bold uppercase mt-1 text-gray-400">
+              <span className={`font-sans text-[8px] tracking-[0.4em] font-bold uppercase mt-1 transition-colors text-gray-500`}>
                 YOGA & HEALING STUDIO
               </span>
             </Link>
 
             {/* Desktop Menu */}
-            <div className="hidden lg:flex items-center space-x-6 xl:space-x-8">
+            <div className="hidden lg:flex items-center space-x-8">
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
                   to={link.path}
-                  className={`text-sm font-medium transition-colors hover:text-sage-green ${
-                    location.pathname === link.path ? 'text-sage-green underline underline-offset-4 decoration-2' : 'text-gray-700'
-                  }`}
+                  className={`text-sm font-bold uppercase tracking-widest transition-colors hover:text-sage-green ${
+                    isSolid ? 'text-gray-700' : 'text-deep-green'
+                  } ${location.pathname === link.path ? 'text-sage-green border-b-2 border-sage-green pb-1' : ''}`}
                 >
                   {link.name}
                 </Link>
               ))}
               <Link 
                 to="/admin"
-                className={`text-sm font-medium transition-all flex items-center gap-2 px-3 py-1.5 rounded-lg border ${
-                  location.pathname === '/admin' 
-                    ? 'bg-deep-green text-white border-deep-green' 
-                    : 'text-gray-500 border-gray-200 hover:border-sage-green hover:text-sage-green'
+                className={`text-xs font-black transition-all flex items-center gap-2 px-5 py-2 rounded-full border-2 uppercase tracking-widest ${
+                  isSolid 
+                    ? 'text-gray-600 border-gray-200 hover:border-sage-green hover:text-sage-green'
+                    : 'text-deep-green border-deep-green/20 hover:bg-deep-green hover:text-white'
                 }`}
               >
-                <Lock size={14} /> 
+                <Lock size={12} /> 
                 <span>Admin</span>
               </Link>
             </div>
 
-            {/* Mobile/Tablet Menu Button */}
+            {/* Mobile Menu Toggle */}
             <div className="lg:hidden flex items-center">
               <button 
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setIsOpen(!isOpen);
-                  }} 
-                  className="p-2 text-deep-green hover:text-sage-green transition-colors focus:outline-none z-[110]"
-                  aria-expanded={isOpen}
-                  aria-label={isOpen ? "Close menu" : "Open menu"}
+                type="button"
+                onClick={() => setIsOpen(!isOpen)} 
+                className={`p-2 transition-all rounded-full focus:outline-none z-[110] ${
+                    isOpen ? 'text-deep-green bg-gray-100 shadow-inner' : 'text-deep-green'
+                }`}
+                aria-label={isOpen ? "Close menu" : "Open menu"}
               >
-                {isOpen ? <X size={32} /> : <Menu size={32} />}
+                {isOpen ? <X size={32} strokeWidth={2.5} /> : <Menu size={32} strokeWidth={2.5} />}
               </button>
             </div>
           </div>
         </div>
       </nav>
 
-      {/* Mobile Menu Overlay - Moved outside nav for cleaner stacking */}
+      {/* Fullscreen Mobile Menu Overlay */}
       <div 
-        className={`lg:hidden fixed inset-0 z-[90] bg-white transition-transform duration-300 ease-in-out transform ${isOpen ? 'translate-y-0' : '-translate-y-full'}`}
-        style={{ paddingTop: '80px' }}
+        className={`lg:hidden fixed inset-0 z-[95] bg-white transition-all duration-500 ease-in-out ${
+          isOpen ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full pointer-events-none'
+        }`}
       >
-        <div className="h-full overflow-y-auto px-8 pb-12 flex flex-col">
-          <div className="space-y-6 flex-grow">
-            {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.path}
-                  className={`block text-3xl font-serif font-medium transition-colors ${
-                      location.pathname === link.path ? 'text-sage-green' : 'text-gray-800'
-                  }`}
-                >
-                  {link.name}
-                </Link>
+        <div className="h-full flex flex-col pt-32 pb-12 px-10 overflow-y-auto bg-warm-white">
+          <div className="flex-1 space-y-6">
+            {navLinks.map((link, idx) => (
+              <Link
+                key={link.name}
+                to={link.path}
+                className={`block text-4xl font-serif font-bold transition-all transform ${
+                  isOpen ? 'translate-x-0 opacity-100' : 'translate-x-10 opacity-0'
+                } ${location.pathname === link.path ? 'text-sage-green' : 'text-deep-green'}`}
+                style={{ transitionDelay: `${idx * 40}ms` }}
+              >
+                {link.name}
+              </Link>
             ))}
           </div>
-          <div className="border-t border-gray-100 pt-8 mt-auto">
-              <Link 
-                to="/admin" 
-                className="flex items-center gap-3 text-gray-500 hover:text-deep-green font-medium text-xl"
-              >
-                <Lock size={24} /> Admin Login
-              </Link>
-              <div className="flex gap-6 mt-8">
-                <a href="#" className="text-gray-400 hover:text-sage-green transition-colors"><Instagram size={24} /></a>
-                <a href="#" className="text-gray-400 hover:text-sage-green transition-colors"><Facebook size={24} /></a>
-              </div>
+          <div className="pt-12 border-t border-gray-200 mt-12">
+            <Link 
+              to="/admin" 
+              className="flex items-center gap-4 text-gray-400 hover:text-deep-green font-black uppercase tracking-[0.2em] text-sm mb-10"
+            >
+              <Lock size={20} /> Access Admin
+            </Link>
+            <div className="flex gap-10">
+              <a href="#" className="text-gray-300 hover:text-sage-green transition-transform hover:scale-125"><Instagram size={32} /></a>
+              <a href="#" className="text-gray-300 hover:text-sage-green transition-transform hover:scale-125"><Facebook size={32} /></a>
+            </div>
           </div>
         </div>
       </div>
@@ -165,68 +162,66 @@ const Footer = () => {
   const location = useLocation();
   const mapLink = "https://www.google.com/maps/search/?api=1&query=BMR+Mall+No+1+/+398,+OMR,+Navalur,+Chennai+600130";
 
-  if (location.pathname.startsWith('/admin/dashboard')) {
-    return null;
-  }
+  if (location.pathname.startsWith('/admin/dashboard')) return null;
 
   return (
-    <footer className="bg-sand-beige/30 pt-16 pb-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
+    <footer className="bg-deep-green text-warm-white pt-24 pb-12 mt-auto">
+      <div className="max-w-7xl mx-auto px-6 lg:px-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16">
           <div className="col-span-1">
             <Link to="/" className="flex flex-col items-start">
-              <span className="font-serif text-2xl font-bold tracking-tight text-deep-green">Meraki</span>
-              <span className="font-sans text-[6px] tracking-[0.3em] font-bold uppercase mt-1 text-gray-500">YOGA & HEALING STUDIO</span>
+              <span className="font-serif text-3xl font-bold tracking-tight text-white">Meraki</span>
+              <span className="font-sans text-[8px] tracking-[0.4em] font-bold uppercase mt-1 text-sage-green">YOGA & HEALING STUDIO</span>
             </Link>
-            <p className="mt-4 text-sm text-gray-600 leading-relaxed max-w-xs">
-              Curating spaces for mindfulness, breathwork, and holistic physical wellness in the heart of Navalur.
+            <p className="mt-8 text-warm-white/60 leading-relaxed max-w-xs font-light">
+              Crafting sacred spaces for mindfulness, conscious movement, and collective healing in Navalur.
             </p>
           </div>
           
           <div>
-            <h4 className="font-serif text-lg font-bold text-deep-green mb-6">Explore</h4>
-            <ul className="grid grid-cols-1 gap-3">
-              <li><Link to="/styles" className="text-sm text-gray-600 hover:text-sage-green transition-colors">Yoga Styles</Link></li>
-              <li><Link to="/schedule" className="text-sm text-gray-600 hover:text-sage-green transition-colors">Class Schedule</Link></li>
-              <li><Link to="/pricing" className="text-sm text-gray-600 hover:text-sage-green transition-colors">Pricing</Link></li>
-              <li><Link to="/blog" className="text-sm text-gray-600 hover:text-sage-green transition-colors">Wellness Blog</Link></li>
+            <h4 className="font-serif text-xl font-bold text-white mb-8">Navigation</h4>
+            <ul className="space-y-4">
+              <li><Link to="/styles" className="text-warm-white/60 hover:text-sage-green transition-colors font-medium">Yoga Disciplines</Link></li>
+              <li><Link to="/schedule" className="text-warm-white/60 hover:text-sage-green transition-colors font-medium">Studio Timetable</Link></li>
+              <li><Link to="/pricing" className="text-warm-white/60 hover:text-sage-green transition-colors font-medium">Memberships</Link></li>
+              <li><Link to="/blog" className="text-warm-white/60 hover:text-sage-green transition-colors font-medium">Wellness Journal</Link></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-serif text-lg font-bold text-deep-green mb-6">Reach Out</h4>
-            <ul className="space-y-4">
-              <li className="flex items-start gap-3">
-                <MapPin size={18} className="text-sage-green shrink-0 mt-0.5" />
-                <a href={mapLink} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-600 hover:text-sage-green transition-colors">
+            <h4 className="font-serif text-xl font-bold text-white mb-8">Reach Us</h4>
+            <ul className="space-y-6">
+              <li className="flex items-start gap-4">
+                <MapPin size={20} className="text-sage-green shrink-0 mt-1" />
+                <a href={mapLink} target="_blank" rel="noopener noreferrer" className="text-warm-white/60 hover:text-sage-green transition-colors leading-relaxed text-sm">
                   BMR Mall No 1 / 398,<br/>OMR, Navalur, Chennai 600130
                 </a>
               </li>
-              <li className="flex items-center gap-3">
-                <Mail size={18} className="text-sage-green shrink-0" />
-                <a href="mailto:meraki.yoga.healing@gmail.com" className="text-sm text-gray-600 hover:text-sage-green transition-colors">meraki.yoga.healing@gmail.com</a>
+              <li className="flex items-center gap-4">
+                <Mail size={20} className="text-sage-green shrink-0" />
+                <a href="mailto:meraki.yoga.healing@gmail.com" className="text-warm-white/60 hover:text-sage-green transition-colors break-all text-sm">meraki.yoga.healing@gmail.com</a>
               </li>
-              <li className="flex items-center gap-3">
-                <Phone size={18} className="text-sage-green shrink-0" />
-                <a href="tel:+919769911150" className="text-sm text-gray-600 hover:text-sage-green transition-colors">+91 97699 11150</a>
+              <li className="flex items-center gap-4">
+                <Phone size={20} className="text-sage-green shrink-0" />
+                <a href="tel:+919769911150" className="text-warm-white/60 hover:text-sage-green transition-colors font-medium text-sm">+91 97699 11150</a>
               </li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-serif text-lg font-bold text-deep-green mb-6">Stay Connected</h4>
-            <div className="flex items-center gap-4">
-              <a href="#" className="p-2 bg-white rounded-full text-deep-green hover:bg-sage-green hover:text-white transition-all shadow-sm"><Instagram size={20} /></a>
-              <a href="#" className="p-2 bg-white rounded-full text-deep-green hover:bg-sage-green hover:text-white transition-all shadow-sm"><Facebook size={20} /></a>
+            <h4 className="font-serif text-xl font-bold text-white mb-8">Follow</h4>
+            <div className="flex items-center gap-6">
+              <a href="#" className="p-4 bg-white/5 rounded-full text-white hover:bg-sage-green hover:text-deep-green transition-all shadow-xl transform hover:-translate-y-2"><Instagram size={24} /></a>
+              <a href="#" className="p-4 bg-white/5 rounded-full text-white hover:bg-sage-green hover:text-deep-green transition-all shadow-xl transform hover:-translate-y-2"><Facebook size={24} /></a>
             </div>
           </div>
         </div>
         
-        <div className="mt-16 pt-8 border-t border-sand-beige border-opacity-50 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-xs text-gray-500 text-center md:text-left">© {new Date().getFullYear()} Meraki Yoga & Healing Studio. All rights reserved.</p>
-          <div className="flex gap-6 text-xs text-gray-400">
-            <a href="#" className="hover:text-gray-600 transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-gray-600 transition-colors">Terms of Service</a>
+        <div className="mt-24 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8">
+          <p className="text-sm text-warm-white/40 font-medium text-center">© {new Date().getFullYear()} Meraki Yoga & Healing. Built for peace.</p>
+          <div className="flex gap-10 text-[10px] text-warm-white/20 font-black uppercase tracking-[0.3em]">
+            <a href="#" className="hover:text-sage-green transition-colors">Privacy Policy</a>
+            <a href="#" className="hover:text-sage-green transition-colors">Terms of Use</a>
           </div>
         </div>
       </div>
@@ -237,10 +232,9 @@ const Footer = () => {
 const App = () => {
   return (
     <Router>
-      <div className="flex flex-col min-h-screen">
+      <div className="flex flex-col min-h-screen bg-warm-white">
         <Navbar />
-        {/* Universal padding-top to account for the fixed navbar height */}
-        <main className="flex-grow pt-[60px] lg:pt-[80px]">
+        <main className="flex-grow flex flex-col">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />

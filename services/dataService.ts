@@ -2,8 +2,6 @@ import React, { useState, useEffect, useContext, createContext } from 'react';
 import { YogaStyle, Asana, Course, ClassSession, PricingPlan, BlogPost } from '../types.ts';
 
 // --- MINIMAL ROUTER IMPLEMENTATION ---
-// Polyfill for missing react-router-dom in this environment
-
 const RouterContext = createContext<any>({ path: '/', state: null, navigate: () => {} });
 
 export const BrowserRouter = ({ children }: { children?: React.ReactNode }) => {
@@ -33,23 +31,26 @@ export const Routes = ({ children }: { children?: React.ReactNode }) => {
   const { path } = useContext(RouterContext);
   let match: React.ReactNode = null;
 
+  // Normalize current path for comparison
+  const normalizedPath = path.replace(/\/$/, '') || '/';
+
   React.Children.forEach(children, (child) => {
     if (match) return;
     if (React.isValidElement(child)) {
       const props = child.props as any;
       const routePath = props.path;
       
-      if (routePath === path) {
+      // Normalize route path
+      const normalizedRoutePath = routePath ? (routePath.replace(/\/$/, '') || '/') : null;
+      
+      if (normalizedRoutePath === normalizedPath) {
          match = props.element;
       } else if (routePath && routePath.includes('/:')) {
-         // Simple param matching for /blog/:slug
-         const base = routePath.split('/:')[0]; // "/blog/"
-         // Ensure it matches start and has same number of segments
+         const base = routePath.split('/:')[0];
          if (path.startsWith(base) && path.split('/').length === routePath.split('/').length) {
              match = props.element;
          }
       } else if (routePath === '*') {
-          // Fallback
           match = props.element;
       }
     }
@@ -85,17 +86,13 @@ export const useNavigate = () => {
 export const useParams = <T extends Record<string, string>>(): T => {
     const { path } = useContext(RouterContext);
     const parts = path.split('/');
-    // Hardcoded parser for known routes
     if (parts[1] === 'blog' && parts[2]) {
         return { slug: parts[2] } as any;
     }
     return {} as any;
 };
 
-// --- END ROUTER IMPLEMENTATION ---
-
-
-// Mock Data for Yoga Styles
+// --- Mock Data ---
 export const yogaStyles: YogaStyle[] = [
   {
     slug: 'hatha-yoga',
@@ -114,19 +111,9 @@ export const yogaStyles: YogaStyle[] = [
     difficulty: 'Intermediate',
     duration: '60 min',
     image: 'https://picsum.photos/seed/vinyasa/800/600'
-  },
-  {
-    slug: 'yin-yoga',
-    name: 'Yin Yoga',
-    description: 'Slow-paced style with poses held for longer periods to target deep connective tissues.',
-    benefits: ['Joint Health', 'Deep Relaxation', 'Flexibility'],
-    difficulty: 'Beginner',
-    duration: '60-75 min',
-    image: 'https://picsum.photos/seed/yin/800/600'
   }
 ];
 
-// Mock Data for Asanas
 export const asanas: Asana[] = [
   {
     slug: 'downward-dog',
@@ -137,30 +124,9 @@ export const asanas: Asana[] = [
     contraindications: ['Carpal tunnel', 'High blood pressure'],
     difficulty: 'Beginner',
     image: 'https://picsum.photos/seed/downdog/600/400'
-  },
-  {
-    slug: 'tree-pose',
-    name: 'Tree Pose',
-    sanskrit: 'Vrksasana',
-    steps: ['Stand tall.', 'Shift weight to left foot.', 'Place right foot on inner thigh.', 'Bring hands to prayer.'],
-    benefits: ['Balance', 'Focus', 'Leg Strength'],
-    contraindications: ['Low blood pressure', 'Headache'],
-    difficulty: 'Beginner',
-    image: 'https://picsum.photos/seed/tree/600/400'
-  },
-  {
-    slug: 'warrior-ii',
-    name: 'Warrior II',
-    sanskrit: 'Virabhadrasana II',
-    steps: ['Step feet wide apart.', 'Turn right foot out.', 'Bend right knee.', 'Extend arms parallel to floor.'],
-    benefits: ['Hip opening', 'Leg strength', 'Stamina'],
-    contraindications: ['Diarrhea', 'High blood pressure'],
-    difficulty: 'Beginner',
-    image: 'https://picsum.photos/seed/warrior2/600/400'
   }
 ];
 
-// Mock Data for Courses
 export const courses: Course[] = [
   {
     slug: 'beginners-journey',
@@ -171,38 +137,13 @@ export const courses: Course[] = [
     price: 49,
     image: 'https://picsum.photos/seed/course1/800/600',
     badge: 'Most Popular'
-  },
-  {
-    slug: 'stress-relief',
-    title: 'Stress Relief Protocol',
-    description: 'Techniques to manage anxiety and find peace.',
-    level: 'All Levels',
-    duration: '2 Weeks',
-    price: 29,
-    image: 'https://picsum.photos/seed/course2/800/600'
-  },
-  {
-    slug: 'advanced-flexibility',
-    title: 'Advanced Flexibility',
-    description: 'Deep stretching for experienced practitioners.',
-    level: 'Advanced',
-    duration: '6 Weeks',
-    price: 89,
-    image: 'https://picsum.photos/seed/course3/800/600',
-    badge: 'New Launch'
   }
 ];
 
-// Mock Schedule
 export const schedule: ClassSession[] = [
-  { id: '1', day: 'Monday', time: '07:00 AM', classType: 'Morning Flow', instructor: 'Sarah J.', location: 'Studio A', level: 'Open' },
-  { id: '2', day: 'Monday', time: '06:00 PM', classType: 'Yin Yoga', instructor: 'Mark D.', location: 'Studio B', level: 'Beginner' },
-  { id: '3', day: 'Tuesday', time: '08:00 AM', classType: 'Power Yoga', instructor: 'Sarah J.', location: 'Studio A', level: 'Intermediate' },
-  { id: '4', day: 'Wednesday', time: '07:00 PM', classType: 'Meditation', instructor: 'Priya K.', location: 'Zen Room', level: 'All' },
-  { id: '5', day: 'Friday', time: '05:30 PM', classType: 'Hatha Align', instructor: 'Mark D.', location: 'Studio A', level: 'Beginner' },
+  { id: '1', day: 'Monday', time: '07:00 AM', classType: 'Morning Flow', instructor: 'Sarah J.', location: 'Studio A', level: 'Open' }
 ];
 
-// Mock Pricing
 export const pricingPlans: PricingPlan[] = [
   {
     id: 'drop-in',
@@ -211,26 +152,9 @@ export const pricingPlans: PricingPlan[] = [
     period: 'per class',
     benefits: ['Access to any single class', 'Mat rental included', 'Valid for 7 days'],
     highlight: false
-  },
-  {
-    id: 'monthly',
-    name: 'Unlimited Monthly',
-    price: '₹2500',
-    period: 'per month',
-    benefits: ['Unlimited classes', '10% off workshops', 'Free guest pass (1/mo)', 'Access to online library'],
-    highlight: true
-  },
-  {
-    id: 'yearly',
-    name: 'Annual Yogi',
-    price: '₹25000',
-    period: 'per year',
-    benefits: ['All monthly benefits', 'Free private session', 'Exclusive merch pack', 'Priority booking'],
-    highlight: false
   }
 ];
 
-// Mock Blog
 export const blogPosts: BlogPost[] = [
   {
     id: 1,
@@ -243,29 +167,5 @@ export const blogPosts: BlogPost[] = [
     content: 'Mindfulness is not just about sitting in silence...',
     published: true,
     likes: 42
-  },
-  {
-    id: 2,
-    slug: 'yoga-for-runners',
-    title: 'Yoga for Runners',
-    created_at: '2023-10-05T09:00:00Z',
-    category: 'Fitness',
-    excerpt: 'The essential stretches every runner needs to prevent injury.',
-    image: 'https://picsum.photos/seed/blog2/800/400',
-    content: 'Running tightens the hamstrings, but yoga can help...',
-    published: true,
-    likes: 28
-  },
-  {
-    id: 3,
-    slug: 'diet-and-practice',
-    title: 'Sattvic Diet & Practice',
-    created_at: '2023-09-28T14:30:00Z',
-    category: 'Diet',
-    excerpt: 'What to eat before and after your practice for optimal energy.',
-    image: 'https://picsum.photos/seed/blog3/800/400',
-    content: 'A sattvic diet consists of fresh, light, and nutritious foods...',
-    published: true,
-    likes: 55
   }
 ];
