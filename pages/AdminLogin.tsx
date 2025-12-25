@@ -69,7 +69,7 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-warm-white">
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 pt-24 pb-12 bg-warm-white">
       <div className="w-full max-w-md">
         
         {/* Error/Success Messages */}
