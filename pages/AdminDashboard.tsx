@@ -159,6 +159,17 @@ const AdminDashboard = () => {
     setFormData(initialData);
   };
 
+  const handleDeleteConfirm = async (name: string, deleteFn: () => Promise<void>) => {
+    if (window.confirm(`Are you sure you want to delete "${name}"? This action cannot be undone.`)) {
+      try {
+        await deleteFn();
+        await fetchAllData();
+      } catch (error: any) {
+        alert(`Failed to delete: ${error.message}`);
+      }
+    }
+  };
+
   const handleInputChange = (e: any) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev: any) => ({
@@ -519,7 +530,7 @@ const AdminDashboard = () => {
                                </span>
                              </div>
                              <div className="text-gray-500 truncate">{style.description}</div>
-                             <ActionButtons item={style} type="styles" onDelete={() => deleteStyle(style.slug, style.image).then(fetchAllData)} />
+                             <ActionButtons item={style} type="styles" onDelete={() => handleDeleteConfirm(style.name, () => deleteStyle(style.slug, style.image))} />
                            </div>
                          ))}
                        </div>
@@ -542,7 +553,7 @@ const AdminDashboard = () => {
                              <div className="font-bold text-deep-green">{session.classType}</div>
                              <div className="text-gray-600 flex items-center gap-2"><UserIcon size={14} />{session.instructor}</div>
                              <div className="text-gray-500 text-xs flex items-center gap-2"><MapPin size={14} />{session.location}</div>
-                             <ActionButtons item={session} type="schedule" onDelete={() => deleteSession(session.id).then(fetchAllData)} />
+                             <ActionButtons item={session} type="schedule" onDelete={() => handleDeleteConfirm(`${session.day} ${session.time} - ${session.classType}`, () => deleteSession(session.id))} />
                            </div>
                          ))}
                        </div>
@@ -565,7 +576,7 @@ const AdminDashboard = () => {
                              <div className="text-gray-600 font-medium">{prog.level}</div>
                              <div className="font-mono font-bold text-sage-green">₹{prog.price}</div>
                              <div className="text-gray-500 truncate">{prog.description}</div>
-                             <ActionButtons item={prog} type="programs" onDelete={() => deleteProgram(prog.slug).then(fetchAllData)} />
+                             <ActionButtons item={prog} type="programs" onDelete={() => handleDeleteConfirm(prog.title, () => deleteProgram(prog.slug))} />
                            </div>
                          ))}
                        </div>
@@ -593,7 +604,7 @@ const AdminDashboard = () => {
                                 {plan.benefits.slice(0, 2).map((b, i) => <span key={i} className="text-[10px] bg-gray-100 px-2 py-0.5 rounded text-gray-500 font-bold uppercase tracking-wider">{b}</span>)}
                                 {plan.benefits.length > 2 && <span className="text-[10px] text-gray-300 font-black">+{plan.benefits.length - 2}</span>}
                              </div>
-                             <ActionButtons item={plan} type="pricing" onDelete={() => deletePricingPlan(plan.id).then(fetchAllData)} />
+                             <ActionButtons item={plan} type="pricing" onDelete={() => handleDeleteConfirm(plan.name, () => deletePricingPlan(plan.id))} />
                            </div>
                          ))}
                        </div>
@@ -620,7 +631,7 @@ const AdminDashboard = () => {
                                 {'★'.repeat(item.rating)}{'☆'.repeat(5-item.rating)}
                              </div>
                              <div className="text-gray-600 italic truncate font-light">"{item.quote}"</div>
-                             <ActionButtons item={item} type="feedback" onDelete={() => deleteFeedback(item.id).then(fetchAllData)} />
+                             <ActionButtons item={item} type="feedback" onDelete={() => handleDeleteConfirm(`Testimonial from ${item.name}`, () => deleteFeedback(item.id))} />
                            </div>
                          ))}
                        </div>
@@ -649,7 +660,7 @@ const AdminDashboard = () => {
                                 </span>
                              </div>
                              <div className="text-gray-400 font-bold text-[10px] text-center uppercase tracking-widest">{post.likes} Likes</div>
-                             <ActionButtons item={post} type="blog" onDelete={() => deleteBlogPost(post.id).then(fetchAllData)} />
+                             <ActionButtons item={post} type="blog" onDelete={() => handleDeleteConfirm(post.title, () => deleteBlogPost(post.id))} />
                            </div>
                          ))}
                        </div>
@@ -682,7 +693,7 @@ const AdminDashboard = () => {
                             <div className="text-xs text-gray-500 truncate flex items-center gap-1">{inq.phone_number ? <><Phone size={10} className="text-sage-green"/> {inq.phone_number}</> : '-'}</div>
                             <div><span className="bg-gray-100 px-2 py-0.5 rounded text-[10px] font-black uppercase text-gray-400 tracking-tighter truncate block text-center">{inq.inquiry_type || 'General'}</span></div>
                             <div className="text-gray-600 line-clamp-1 italic text-xs">"{inq.message}"</div>
-                            <ActionButtons item={inq} type="messages" onDelete={() => deleteInquiry(inq.id).then(fetchAllData)} />
+                            <ActionButtons item={inq} type="messages" onDelete={() => handleDeleteConfirm(`Message from ${inq.first_name} ${inq.last_name}`, () => deleteInquiry(inq.id))} />
                           </div>
                         ))}
                       </div>
