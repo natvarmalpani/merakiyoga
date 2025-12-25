@@ -34,19 +34,18 @@ const Home = () => {
   return (
     <div className="w-full flex flex-col bg-warm-white">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
-        {/* Background Layer - Negative z-index to stay truly in background */}
-        <div className="absolute inset-0 -z-10 pointer-events-none bg-warm-white">
+      <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-transparent">
+        {/* Background Layer */}
+        <div className="absolute inset-0 -z-10 pointer-events-none">
           <img 
             src={heroImageUrl} 
             alt="Yoga Studio Sanctuary" 
-            className="w-full h-full object-cover opacity-90 transition-opacity duration-1000"
+            className="w-full h-full object-cover"
             loading="eager"
-            onLoad={(e) => (e.currentTarget.style.opacity = '0.9')}
           />
-          {/* Light overlay for readability */}
-          <div className="absolute inset-0 bg-gradient-to-tr from-white/70 via-transparent to-white/30"></div>
-          <div className="absolute inset-0 bg-black/5"></div>
+          {/* Refined gradient overlay for visibility + readability */}
+          <div className="absolute inset-0 bg-white/40"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-warm-white"></div>
         </div>
         
         {/* Content Container */}
@@ -56,7 +55,7 @@ const Home = () => {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1 }}
           >
-            <h1 className="font-serif text-6xl md:text-8xl lg:text-9xl text-deep-green leading-[1.1] mb-8 tracking-tighter drop-shadow-sm">
+            <h1 className="font-serif text-6xl md:text-8xl lg:text-9xl text-deep-green leading-[1.1] mb-8 tracking-tighter drop-shadow-md">
               Find Your <br />
               <span className="italic">Sanctuary</span>
             </h1>
@@ -66,9 +65,9 @@ const Home = () => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.3 }}
-            className="text-lg md:text-2xl lg:text-3xl text-gray-900 mb-12 max-w-3xl mx-auto leading-relaxed font-medium"
+            className="text-lg md:text-2xl lg:text-3xl text-gray-900 mb-12 max-w-3xl mx-auto leading-relaxed font-semibold drop-shadow-sm"
           >
-            A dedicated space for <span className="text-deep-green font-bold">mindful movement</span>, breathwork, and holistic growth in Chennai.
+            A dedicated space for <span className="text-deep-green font-bold underline decoration-sage-green/30">mindful movement</span>, breathwork, and holistic growth in Chennai.
           </motion.p>
 
           <motion.div 
@@ -79,7 +78,7 @@ const Home = () => {
           >
             <Link 
               to="/schedule" 
-              className="w-full sm:w-auto bg-deep-green text-white py-4 px-10 rounded-full hover:bg-black transition-all duration-300 font-bold text-lg flex items-center justify-center gap-3 shadow-xl transform hover:scale-105"
+              className="w-full sm:w-auto bg-deep-green text-white py-4 px-10 rounded-full hover:bg-black transition-all duration-300 font-bold text-lg flex items-center justify-center gap-3 shadow-2xl transform hover:scale-105"
             >
               Book Your Class <ArrowRight size={20} />
             </Link>

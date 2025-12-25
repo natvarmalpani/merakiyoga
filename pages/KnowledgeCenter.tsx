@@ -94,7 +94,7 @@ const KnowledgeCenter = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-16">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32">
       <div className="text-center mb-10 md:mb-16">
         <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl text-deep-green mb-3">AI Studio</h1>
         <p className="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto">Deepen your knowledge with our AI-powered asana encyclopedia.</p>
@@ -118,7 +118,7 @@ const KnowledgeCenter = () => {
                                         setSelectedCategory(e.target.value);
                                         setSelectedAsana(''); 
                                     }}
-                                    className="w-full px-4 py-3.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-sage-green focus:border-transparent outline-none bg-gray-50 text-gray-700 appearance-none cursor-pointer hover:bg-gray-100 transition-colors"
+                                    className="w-full px-4 py-3.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-sage-green focus:border-transparent outline-none bg-gray-50 text-gray-700 appearance-none cursor-pointer hover:bg-gray-100 transition-colors"
                                 >
                                     <option value="">Select Category</option>
                                     {categories.map((cat) => (
@@ -136,7 +136,7 @@ const KnowledgeCenter = () => {
                                     value={selectedAsana}
                                     onChange={(e) => setSelectedAsana(e.target.value)}
                                     disabled={!selectedCategory}
-                                    className="w-full px-4 py-3.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-sage-green focus:border-transparent outline-none bg-gray-50 text-gray-700 appearance-none disabled:bg-gray-100 disabled:text-gray-400 cursor-pointer hover:bg-gray-100 transition-colors"
+                                    className="w-full px-4 py-3.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-sage-green focus:border-transparent outline-none bg-gray-50 text-gray-700 appearance-none disabled:bg-gray-100 disabled:text-gray-400 cursor-pointer hover:bg-gray-100 transition-colors"
                                 >
                                     <option value="">Select Asana</option>
                                     {filteredAsanas.map((asana) => (

@@ -69,7 +69,7 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4 py-12 bg-warm-white">
+    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-warm-white">
       <div className="w-full max-w-md">
         
         {/* Error/Success Messages */}
@@ -128,7 +128,7 @@ const AdminLogin = () => {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sage-green focus:border-transparent outline-none transition-all text-gray-800 placeholder-gray-400"
+                    className="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sage-green focus:border-transparent outline-none transition-all text-gray-800 placeholder-gray-400"
                     placeholder="name@example.com"
                     required
                   />
@@ -144,7 +144,7 @@ const AdminLogin = () => {
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
-                    className="w-full pl-11 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sage-green focus:border-transparent outline-none transition-all text-gray-800 placeholder-gray-400"
+                    className="w-full pl-11 pr-12 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sage-green focus:border-transparent outline-none transition-all text-gray-800 placeholder-gray-400"
                     placeholder="Enter your password"
                     minLength={6}
                     required

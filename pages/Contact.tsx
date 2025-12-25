@@ -42,14 +42,14 @@ const Contact = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-20">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24">
         <div>
             <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl text-deep-green mb-6 text-center lg:text-left">Get in Touch</h1>
             <p className="text-gray-600 mb-10 text-center lg:text-left text-base md:text-lg">We'd love to hear from you. Visit our sanctuary or send us a message.</p>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-6 sm:gap-8 text-left mb-12">
-                <div className="flex items-start gap-4 p-4 rounded-2xl bg-white shadow-sm border border-gray-50">
+                <div className="flex items-start gap-4 p-4 rounded-2xl bg-white shadow-sm border border-gray-100">
                     <div className="bg-sage-green/10 p-3 rounded-full text-deep-green shrink-0"><MapPin size={24} /></div>
                     <div>
                         <h3 className="font-serif text-lg font-medium text-deep-green mb-1">Our Sanctuary</h3>
@@ -58,14 +58,14 @@ const Contact = () => {
                         </a>
                     </div>
                 </div>
-                <div className="flex items-start gap-4 p-4 rounded-2xl bg-white shadow-sm border border-gray-50">
+                <div className="flex items-start gap-4 p-4 rounded-2xl bg-white shadow-sm border border-gray-100">
                     <div className="bg-sage-green/10 p-3 rounded-full text-deep-green shrink-0"><Mail size={24} /></div>
                     <div>
                         <h3 className="font-serif text-lg font-medium text-deep-green mb-1">Email Support</h3>
                         <a href="mailto:meraki.yoga.healing@gmail.com" className="text-sm text-gray-500 hover:text-sage-green transition-colors break-all">meraki.yoga.healing@gmail.com</a>
                     </div>
                 </div>
-                <div className="flex items-start gap-4 p-4 rounded-2xl bg-white shadow-sm border border-gray-50 sm:col-span-2 lg:col-span-1">
+                <div className="flex items-start gap-4 p-4 rounded-2xl bg-white shadow-sm border border-gray-100 sm:col-span-2 lg:col-span-1">
                     <div className="bg-sage-green/10 p-3 rounded-full text-deep-green shrink-0"><Phone size={24} /></div>
                     <div>
                         <h3 className="font-serif text-lg font-medium text-deep-green mb-1">Direct Call</h3>
@@ -79,38 +79,38 @@ const Contact = () => {
             </div>
         </div>
 
-        <div className="bg-white p-6 sm:p-10 rounded-[2.5rem] shadow-xl border border-gray-50 relative -mt-8 lg:mt-0">
+        <div className="bg-white p-6 sm:p-10 rounded-[2.5rem] shadow-xl border border-gray-200 relative -mt-8 lg:mt-0">
             <h2 className="font-serif text-2xl sm:text-3xl text-deep-green mb-2 text-left">Connect With Us</h2>
             <p className="text-sm text-gray-400 mb-8 text-left font-medium">Subject: <span className="text-sage-green">{inquiryHeading}</span></p>
             
             {submitError && (
-                <div className="mb-6 p-4 bg-red-50 text-red-700 rounded-xl text-sm flex items-center gap-3 border border-red-100"><AlertCircle size={20} /> {submitError}</div>
+                <div className="mb-6 p-4 bg-red-50 text-red-700 rounded-xl text-sm flex items-center gap-3 border border-red-200"><AlertCircle size={20} /> {submitError}</div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-5 text-left">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div>
-                        <label className="block text-[10px] font-bold text-gray-400 mb-2 uppercase tracking-widest">First Name</label>
-                        <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} className="w-full px-5 py-3.5 bg-gray-50 border border-transparent focus:border-sage-green/30 rounded-xl focus:bg-white outline-none transition-all" required />
+                        <label className="block text-[10px] font-bold text-gray-500 mb-2 uppercase tracking-widest">First Name</label>
+                        <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} className="w-full px-5 py-3.5 bg-gray-50 border border-gray-300 focus:border-sage-green focus:ring-1 focus:ring-sage-green rounded-xl outline-none transition-all placeholder-gray-400" required />
                     </div>
                     <div>
-                        <label className="block text-[10px] font-bold text-gray-400 mb-2 uppercase tracking-widest">Last Name</label>
-                        <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} className="w-full px-5 py-3.5 bg-gray-50 border border-transparent focus:border-sage-green/30 rounded-xl focus:bg-white outline-none transition-all" required />
+                        <label className="block text-[10px] font-bold text-gray-500 mb-2 uppercase tracking-widest">Last Name</label>
+                        <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} className="w-full px-5 py-3.5 bg-gray-50 border border-gray-300 focus:border-sage-green focus:ring-1 focus:ring-sage-green rounded-xl outline-none transition-all placeholder-gray-400" required />
                     </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div>
-                        <label className="block text-[10px] font-bold text-gray-400 mb-2 uppercase tracking-widest">Email</label>
-                        <input type="email" name="email" value={formData.email} onChange={handleChange} className="w-full px-5 py-3.5 bg-gray-50 border border-transparent focus:border-sage-green/30 rounded-xl focus:bg-white outline-none transition-all" required />
+                        <label className="block text-[10px] font-bold text-gray-500 mb-2 uppercase tracking-widest">Email</label>
+                        <input type="email" name="email" value={formData.email} onChange={handleChange} className="w-full px-5 py-3.5 bg-gray-50 border border-gray-300 focus:border-sage-green focus:ring-1 focus:ring-sage-green rounded-xl outline-none transition-all placeholder-gray-400" required />
                     </div>
                     <div>
-                        <label className="block text-[10px] font-bold text-gray-400 mb-2 uppercase tracking-widest">Phone</label>
-                        <input type="tel" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} className="w-full px-5 py-3.5 bg-gray-50 border border-transparent focus:border-sage-green/30 rounded-xl focus:bg-white outline-none transition-all" required />
+                        <label className="block text-[10px] font-bold text-gray-500 mb-2 uppercase tracking-widest">Phone</label>
+                        <input type="tel" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} className="w-full px-5 py-3.5 bg-gray-50 border border-gray-300 focus:border-sage-green focus:ring-1 focus:ring-sage-green rounded-xl outline-none transition-all placeholder-gray-400" required />
                     </div>
                 </div>
                 <div>
-                    <label className="block text-[10px] font-bold text-gray-400 mb-2 uppercase tracking-widest">Your Message</label>
-                    <textarea rows={4} name="message" value={formData.message} onChange={handleChange} className="w-full px-5 py-3.5 bg-gray-50 border border-transparent focus:border-sage-green/30 rounded-xl focus:bg-white outline-none transition-all resize-none" required></textarea>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-2 uppercase tracking-widest">Your Message</label>
+                    <textarea rows={4} name="message" value={formData.message} onChange={handleChange} className="w-full px-5 py-3.5 bg-gray-50 border border-gray-300 focus:border-sage-green focus:ring-1 focus:ring-sage-green rounded-xl outline-none transition-all resize-none placeholder-gray-400" required></textarea>
                 </div>
                 <button type="submit" disabled={isSubmitting} className="w-full bg-deep-green text-white py-4 rounded-2xl font-medium hover:bg-opacity-90 transition-all flex justify-center items-center gap-3 shadow-lg shadow-deep-green/10 active:scale-[0.98]">
                     {isSubmitting ? <Loader2 className="animate-spin" size={20} /> : <><span className="text-lg">Send via WhatsApp</span> <Send size={20} /></>}
