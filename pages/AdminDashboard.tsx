@@ -88,7 +88,7 @@ const DashboardSection = ({ title, description, onAdd, children, hideAddButton, 
 );
 
 const TableHeader = ({ cols, labels }: { cols: string[], labels: string[] }) => (
-  <div className="grid gap-4 px-6 py-4 bg-gray-50 border-b border-gray-100 font-black text-[10px] uppercase tracking-[0.2em] text-gray-400" style={{ gridTemplateColumns: cols.join(' ') }}>
+  <div className="grid gap-4 px-6 py-4 bg-gray-100 border-b border-gray-200 font-bold text-xs uppercase tracking-[0.1em] text-deep-green" style={{ gridTemplateColumns: cols.join(' ') }}>
     {labels.map((label, i) => <div key={i}>{label}</div>)}
   </div>
 );
@@ -519,17 +519,17 @@ const AdminDashboard = () => {
                    <div className="overflow-x-auto">
                      <div className="min-w-[800px]">
                        <TableHeader cols={['80px', '200px', '150px', '1fr', '100px']} labels={['Image', 'Style Name', 'Difficulty', 'Description', 'Action']} />
-                       <div className="divide-y divide-gray-50">
+                       <div className="divide-y divide-gray-100">
                          {styles.map(style => (
                            <div key={style.slug} className="grid gap-4 px-6 py-4 items-center hover:bg-gray-50 text-sm" style={{ gridTemplateColumns: '80px 200px 150px 1fr 100px' }}>
                              <img src={style.image} alt="" className="w-12 h-12 rounded-xl object-cover bg-gray-100" />
-                             <div className="font-bold text-gray-900">{style.name}</div>
+                             <div className="font-bold text-gray-800">{style.name}</div>
                              <div>
                                <span className={`px-2 py-1 rounded text-[10px] font-black uppercase tracking-widest ${style.difficulty === 'Beginner' ? 'bg-green-100 text-green-700' : style.difficulty === 'Intermediate' ? 'bg-yellow-100 text-yellow-700' : 'bg-orange-100 text-orange-700'}`}>
                                  {style.difficulty}
                                </span>
                              </div>
-                             <div className="text-gray-500 truncate">{style.description}</div>
+                             <div className="text-gray-700 truncate">{style.description}</div>
                              <ActionButtons item={style} type="styles" onDelete={() => handleDeleteConfirm(style.name, () => deleteStyle(style.slug, style.image))} />
                            </div>
                          ))}
@@ -545,14 +545,14 @@ const AdminDashboard = () => {
                    <div className="overflow-x-auto">
                      <div className="min-w-[800px]">
                        <TableHeader cols={['120px', '120px', '200px', '150px', '1fr', '100px']} labels={['Day', 'Time', 'Class', 'Instructor', 'Location', 'Action']} />
-                       <div className="divide-y divide-gray-50">
+                       <div className="divide-y divide-gray-100">
                          {scheduleData.map(session => (
                            <div key={session.id} className="grid gap-4 px-6 py-4 items-center hover:bg-gray-50 text-sm" style={{ gridTemplateColumns: '120px 120px 200px 150px 1fr 100px' }}>
-                             <div className="font-medium text-sage-green flex items-center gap-2"><Calendar size={14} />{session.day}</div>
-                             <div className="text-gray-600 flex items-center gap-2"><Clock size={14} />{session.time}</div>
+                             <div className="font-bold text-sage-green flex items-center gap-2"><Calendar size={14} />{session.day}</div>
+                             <div className="text-gray-800 font-medium flex items-center gap-2"><Clock size={14} />{session.time}</div>
                              <div className="font-bold text-deep-green">{session.classType}</div>
-                             <div className="text-gray-600 flex items-center gap-2"><UserIcon size={14} />{session.instructor}</div>
-                             <div className="text-gray-500 text-xs flex items-center gap-2"><MapPin size={14} />{session.location}</div>
+                             <div className="text-gray-800 flex items-center gap-2"><UserIcon size={14} />{session.instructor}</div>
+                             <div className="text-gray-700 text-xs flex items-center gap-2 font-medium"><MapPin size={14} />{session.location}</div>
                              <ActionButtons item={session} type="schedule" onDelete={() => handleDeleteConfirm(`${session.day} ${session.time} - ${session.classType}`, () => deleteSession(session.id))} />
                            </div>
                          ))}
@@ -568,14 +568,14 @@ const AdminDashboard = () => {
                    <div className="overflow-x-auto">
                      <div className="min-w-[800px]">
                        <TableHeader cols={['80px', '200px', '120px', '120px', '1fr', '100px']} labels={['Image', 'Title', 'Level', 'Price', 'Description', 'Action']} />
-                       <div className="divide-y divide-gray-50">
+                       <div className="divide-y divide-gray-100">
                          {programs.map(prog => (
                            <div key={prog.slug} className="grid gap-4 px-6 py-4 items-center hover:bg-gray-50 text-sm" style={{ gridTemplateColumns: '80px 200px 120px 120px 1fr 100px' }}>
                              <img src={prog.image} alt="" className="w-12 h-12 rounded-xl object-cover bg-gray-100 shadow-sm" />
-                             <div className="font-bold text-gray-900">{prog.title}</div>
-                             <div className="text-gray-600 font-medium">{prog.level}</div>
+                             <div className="font-bold text-gray-800">{prog.title}</div>
+                             <div className="text-gray-800 font-bold">{prog.level}</div>
                              <div className="font-mono font-bold text-sage-green">₹{prog.price}</div>
-                             <div className="text-gray-500 truncate">{prog.description}</div>
+                             <div className="text-gray-700 truncate">{prog.description}</div>
                              <ActionButtons item={prog} type="programs" onDelete={() => handleDeleteConfirm(prog.title, () => deleteProgram(prog.slug))} />
                            </div>
                          ))}
@@ -591,18 +591,18 @@ const AdminDashboard = () => {
                    <div className="overflow-x-auto">
                      <div className="min-w-[800px]">
                        <TableHeader cols={['200px', '150px', '150px', '1fr', '100px']} labels={['Plan Name', 'Price', 'Period', 'Benefits', 'Action']} />
-                       <div className="divide-y divide-gray-50">
+                       <div className="divide-y divide-gray-100">
                          {pricingPlansData.map(plan => (
                            <div key={plan.id} className="grid gap-4 px-6 py-4 items-center hover:bg-gray-50 text-sm" style={{ gridTemplateColumns: '200px 150px 150px 1fr 100px' }}>
-                             <div className="font-bold text-gray-900 flex items-center gap-2">
+                             <div className="font-bold text-gray-800 flex items-center gap-2">
                                 {plan.highlight && <span className="w-2.5 h-2.5 rounded-full bg-sage-green" title="Highlighted"></span>}
                                 {plan.name}
                              </div>
                              <div className="font-mono font-bold text-sage-green">{plan.price}</div>
-                             <div className="text-gray-500 font-medium">{plan.period}</div>
+                             <div className="text-gray-800 font-bold">{plan.period}</div>
                              <div className="flex gap-2 flex-wrap">
-                                {plan.benefits.slice(0, 2).map((b, i) => <span key={i} className="text-[10px] bg-gray-100 px-2 py-0.5 rounded text-gray-500 font-bold uppercase tracking-wider">{b}</span>)}
-                                {plan.benefits.length > 2 && <span className="text-[10px] text-gray-300 font-black">+{plan.benefits.length - 2}</span>}
+                                {plan.benefits.slice(0, 2).map((b, i) => <span key={i} className="text-[10px] bg-gray-200 px-2 py-0.5 rounded text-gray-800 font-bold uppercase tracking-wider">{b}</span>)}
+                                {plan.benefits.length > 2 && <span className="text-[10px] text-gray-400 font-black">+{plan.benefits.length - 2}</span>}
                              </div>
                              <ActionButtons item={plan} type="pricing" onDelete={() => handleDeleteConfirm(plan.name, () => deletePricingPlan(plan.id))} />
                            </div>
@@ -619,18 +619,18 @@ const AdminDashboard = () => {
                    <div className="overflow-x-auto">
                      <div className="min-w-[800px]">
                        <TableHeader cols={['60px', '180px', '150px', '1fr', '100px']} labels={['Image', 'Customer', 'Rating', 'Testimonial', 'Action']} />
-                       <div className="divide-y divide-gray-50">
+                       <div className="divide-y divide-gray-100">
                          {feedback.map(item => (
                            <div key={item.id} className="grid gap-4 px-6 py-4 items-center hover:bg-gray-50 text-sm" style={{ gridTemplateColumns: '60px 180px 150px 1fr 100px' }}>
                              <img src={item.image || 'https://picsum.photos/100'} alt="" className="w-10 h-10 rounded-full object-cover bg-gray-100 ring-2 ring-white shadow-sm" />
                              <div>
-                               <div className="font-bold text-gray-900">{item.name}</div>
-                               <div className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{item.role}</div>
+                               <div className="font-bold text-gray-800">{item.name}</div>
+                               <div className="text-[10px] text-gray-500 font-black uppercase tracking-widest">{item.role}</div>
                              </div>
-                             <div className="flex text-yellow-400 text-xs gap-0.5">
+                             <div className="flex text-yellow-500 text-xs gap-0.5">
                                 {'★'.repeat(item.rating)}{'☆'.repeat(5-item.rating)}
                              </div>
-                             <div className="text-gray-600 italic truncate font-light">"{item.quote}"</div>
+                             <div className="text-gray-800 italic truncate font-medium">"{item.quote}"</div>
                              <ActionButtons item={item} type="feedback" onDelete={() => handleDeleteConfirm(`Testimonial from ${item.name}`, () => deleteFeedback(item.id))} />
                            </div>
                          ))}
@@ -646,20 +646,20 @@ const AdminDashboard = () => {
                    <div className="overflow-x-auto">
                      <div className="min-w-[800px]">
                        <TableHeader cols={['80px', '1fr', '120px', '100px', '100px']} labels={['Image', 'Title', 'Date', 'Status', 'Action']} />
-                       <div className="divide-y divide-gray-50">
+                       <div className="divide-y divide-gray-100">
                          {blogPosts.map(post => (
                            <div key={post.id} className="grid gap-4 px-6 py-4 items-center hover:bg-gray-50 text-sm" style={{ gridTemplateColumns: '80px 1fr 120px 100px 100px' }}>
                              <img src={post.image || 'https://picsum.photos/100'} alt="" className="w-12 h-12 rounded-xl object-cover bg-gray-100" />
                              <div>
-                                <div className="font-bold text-gray-900 line-clamp-1">{post.title}</div>
-                                <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{new Date(post.created_at).toLocaleDateString()}</div>
+                                <div className="font-bold text-gray-800 line-clamp-1">{post.title}</div>
+                                <div className="text-[10px] text-gray-500 font-black uppercase tracking-wider">{new Date(post.created_at).toLocaleDateString()}</div>
                              </div>
                              <div>
-                                <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest ${post.published ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                                <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest ${post.published ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-800'}`}>
                                   {post.published ? 'Published' : 'Draft'}
                                 </span>
                              </div>
-                             <div className="text-gray-400 font-bold text-[10px] text-center uppercase tracking-widest">{post.likes} Likes</div>
+                             <div className="text-gray-800 font-black text-[10px] text-center uppercase tracking-widest">{post.likes} Likes</div>
                              <ActionButtons item={post} type="blog" onDelete={() => handleDeleteConfirm(post.title, () => deleteBlogPost(post.id))} />
                            </div>
                          ))}
@@ -681,18 +681,18 @@ const AdminDashboard = () => {
                   <div className="overflow-x-auto">
                     <div className="min-w-[900px]">
                       <TableHeader cols={['40px', '100px', '140px', '160px', '120px', '100px', '1fr', '80px']} labels={['', 'Date', 'Name', 'Email', 'Phone', 'Type', 'Message', 'Action']} />
-                      <div className="divide-y divide-gray-50">
+                      <div className="divide-y divide-gray-100">
                         {inquiries.map((inq) => (
                           <div key={inq.id} className={`grid gap-4 px-6 py-4 items-center hover:bg-gray-50 transition-colors text-sm ${selectedInquiryIds.includes(inq.id) ? 'bg-sage-green/5' : ''}`} style={{ gridTemplateColumns: '40px 100px 140px 160px 120px 100px 1fr 80px' }}>
-                            <button onClick={() => setSelectedInquiryIds(p => p.includes(inq.id) ? p.filter(i => i !== inq.id) : [...p, inq.id])} className="text-gray-300 hover:text-sage-green transition-colors">
+                            <button onClick={() => setSelectedInquiryIds(p => p.includes(inq.id) ? p.filter(i => i !== inq.id) : [...p, inq.id])} className="text-gray-400 hover:text-sage-green transition-colors">
                               {selectedInquiryIds.includes(inq.id) ? <CheckSquare size={20} className="text-sage-green" /> : <Square size={20} />}
                             </button>
-                            <div className="text-gray-400 font-mono text-[10px]">{new Date(inq.created_at).toLocaleDateString()}</div>
-                            <div className="font-bold text-gray-900 truncate">{inq.first_name} {inq.last_name}</div>
-                            <div className="text-xs text-gray-500 truncate">{inq.email}</div>
-                            <div className="text-xs text-gray-500 truncate flex items-center gap-1">{inq.phone_number ? <><Phone size={10} className="text-sage-green"/> {inq.phone_number}</> : '-'}</div>
-                            <div><span className="bg-gray-100 px-2 py-0.5 rounded text-[10px] font-black uppercase text-gray-400 tracking-tighter truncate block text-center">{inq.inquiry_type || 'General'}</span></div>
-                            <div className="text-gray-600 line-clamp-1 italic text-xs">"{inq.message}"</div>
+                            <div className="text-gray-700 font-mono text-[11px] font-bold">{new Date(inq.created_at).toLocaleDateString()}</div>
+                            <div className="font-bold text-gray-800 truncate">{inq.first_name} {inq.last_name}</div>
+                            <div className="text-xs text-gray-800 font-medium truncate">{inq.email}</div>
+                            <div className="text-xs text-gray-800 font-bold truncate flex items-center gap-1">{inq.phone_number ? <><Phone size={10} className="text-sage-green"/> {inq.phone_number}</> : '-'}</div>
+                            <div><span className="bg-gray-200 px-2 py-0.5 rounded text-[10px] font-black uppercase text-gray-800 tracking-tighter truncate block text-center">{inq.inquiry_type || 'General'}</span></div>
+                            <div className="text-gray-800 line-clamp-1 italic text-xs font-medium">"{inq.message}"</div>
                             <ActionButtons item={inq} type="messages" onDelete={() => handleDeleteConfirm(`Message from ${inq.first_name} ${inq.last_name}`, () => deleteInquiry(inq.id))} />
                           </div>
                         ))}
