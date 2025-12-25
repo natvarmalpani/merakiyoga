@@ -34,28 +34,30 @@ const Home = () => {
   return (
     <div className="w-full flex flex-col bg-warm-white">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-transparent">
-        {/* Background Layer */}
-        <div className="absolute inset-0 -z-10 pointer-events-none">
-          <img 
-            src={heroImageUrl} 
-            alt="Yoga Studio Sanctuary" 
-            className="w-full h-full object-cover"
-            loading="eager"
-          />
-          {/* Refined gradient overlay for visibility + readability */}
-          <div className="absolute inset-0 bg-white/40"></div>
-          <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-warm-white"></div>
+      <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
+        {/* Absolute Background Layer - Fixed visibility issues */}
+        <div 
+          className="absolute inset-0 w-full h-full"
+          style={{
+            backgroundImage: `url(${heroImageUrl})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            zIndex: 0
+          }}
+        >
+          {/* Subtle gradient to ease text readability without hiding the image */}
+          <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-transparent to-warm-white/90"></div>
+          <div className="absolute inset-0 bg-black/5"></div>
         </div>
         
-        {/* Content Container */}
+        {/* Content Container - Ensure it stays above the background */}
         <div className="relative z-10 text-center max-w-6xl px-6 py-20 mt-10">
           <motion.div
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1 }}
           >
-            <h1 className="font-serif text-6xl md:text-8xl lg:text-9xl text-deep-green leading-[1.1] mb-8 tracking-tighter drop-shadow-md">
+            <h1 className="font-serif text-6xl md:text-8xl lg:text-9xl text-deep-green leading-[1.1] mb-8 tracking-tighter drop-shadow-sm">
               Find Your <br />
               <span className="italic">Sanctuary</span>
             </h1>
@@ -65,9 +67,9 @@ const Home = () => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.3 }}
-            className="text-lg md:text-2xl lg:text-3xl text-gray-900 mb-12 max-w-3xl mx-auto leading-relaxed font-semibold drop-shadow-sm"
+            className="text-lg md:text-2xl lg:text-3xl text-gray-900 mb-12 max-w-3xl mx-auto leading-relaxed font-bold drop-shadow-sm"
           >
-            A dedicated space for <span className="text-deep-green font-bold underline decoration-sage-green/30">mindful movement</span>, breathwork, and holistic growth in Chennai.
+            A dedicated space for <span className="text-deep-green font-black underline decoration-sage-green/40 underline-offset-4">mindful movement</span>, breathwork, and holistic growth in Chennai.
           </motion.p>
 
           <motion.div 
@@ -78,13 +80,13 @@ const Home = () => {
           >
             <Link 
               to="/schedule" 
-              className="w-full sm:w-auto bg-deep-green text-white py-4 px-10 rounded-full hover:bg-black transition-all duration-300 font-bold text-lg flex items-center justify-center gap-3 shadow-2xl transform hover:scale-105"
+              className="w-full sm:w-auto bg-deep-green text-white py-4 px-10 rounded-full hover:bg-black transition-all duration-300 font-bold text-lg flex items-center justify-center gap-3 shadow-xl transform hover:scale-105"
             >
               Book Your Class <ArrowRight size={20} />
             </Link>
             <Link 
               to="/knowledge-center" 
-              className="w-full sm:w-auto bg-white/95 backdrop-blur text-deep-green border-2 border-deep-green/10 py-4 px-10 rounded-full hover:bg-white transition-all duration-300 font-bold text-lg flex items-center justify-center shadow-lg transform hover:scale-105"
+              className="w-full sm:w-auto bg-white/90 backdrop-blur-md text-deep-green border-2 border-deep-green/10 py-4 px-10 rounded-full hover:bg-white transition-all duration-300 font-bold text-lg flex items-center justify-center shadow-lg transform hover:scale-105"
             >
               AI Yoga Studio
             </Link>
@@ -92,9 +94,9 @@ const Home = () => {
         </div>
 
         {/* Scroll Indicator */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-3 text-deep-green/40">
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-3 text-deep-green/60">
           <span className="text-[10px] uppercase tracking-[0.6em] font-black">Explore</span>
-          <div className="w-[1px] h-10 bg-gradient-to-b from-deep-green/40 to-transparent"></div>
+          <div className="w-[1px] h-10 bg-gradient-to-b from-deep-green/60 to-transparent"></div>
         </div>
       </section>
 
