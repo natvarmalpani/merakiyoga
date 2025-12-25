@@ -14,7 +14,8 @@
     "framer-motion": "11.15.0",
     "lucide-react": "0.469.0",
     "@supabase/supabase-js": "2.47.10",
-    "@google/genai": "^1.34.0"
+    "@google/genai": "^1.34.0",
+    "@vercel/analytics": "^1.6.1"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
