@@ -2,7 +2,7 @@ import React from 'react';
 
 const About = () => {
   return (
-    <div className="max-w-4xl mx-auto px-4 py-16 text-center">
+    <div className="max-w-4xl mx-auto px-4 pt-32 pb-16 text-center">
       <h1 className="font-serif text-4xl text-deep-green mb-6">Our Philosophy</h1>
       <p className="text-gray-600 leading-relaxed mb-8">
         At Meraki, we believe yoga is more than just physical exercise; it is a path to self-discovery.

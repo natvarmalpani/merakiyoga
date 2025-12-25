@@ -37,7 +37,7 @@ const Styles = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-12">
       <div className="text-center mb-16">
         <h1 className="font-serif text-4xl text-deep-green mb-4">Yoga Styles</h1>
         <p className="text-gray-600 max-w-2xl mx-auto mb-4">Explore our diverse range of classes designed to meet you where you are.</p>

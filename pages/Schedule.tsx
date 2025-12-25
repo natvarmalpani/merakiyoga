@@ -56,7 +56,7 @@ const Schedule = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-12">
       <div className="text-center mb-16">
         <h1 className="font-serif text-4xl text-deep-green mb-4">Class Schedule</h1>
         <p className="text-gray-600">Join us on the mat. Book your spot in advance.</p>

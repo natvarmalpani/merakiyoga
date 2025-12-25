@@ -29,7 +29,7 @@ const Blog = () => {
   }, []);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12">
+    <div className="max-w-7xl mx-auto px-4 pt-32 pb-12">
         <div className="text-center mb-16">
             <h1 className="font-serif text-4xl text-deep-green mb-4">Wellness Journal</h1>
             <p className="text-gray-600">Thoughts on mindfulness, movement, and living well.</p>
