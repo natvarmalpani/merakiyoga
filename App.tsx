@@ -58,6 +58,9 @@ const Navbar = () => {
     { name: 'Contact', path: '/contact' },
   ];
 
+  const INSTAGRAM_URL = "https://www.instagram.com/meraki_yogaandhealing?igsh=MWcweTdwZm8zODk4cQ%3D%3D&utm_source=qr";
+  const FACEBOOK_URL = "https://www.facebook.com/share/181EoAbr7H/?mibextid=wwXIfr";
+
   // More robust home page detection
   const isHomePage = location.pathname === '/' || location.pathname === '' || location.pathname.endsWith('/index.html');
   const isSolid = scrolled || isOpen || !isHomePage;
@@ -148,8 +151,8 @@ const Navbar = () => {
               <Lock size={20} /> Access Admin
             </Link>
             <div className="flex gap-10">
-              <a href="#" className="text-gray-300 hover:text-sage-green transition-transform hover:scale-125"><Instagram size={32} /></a>
-              <a href="#" className="text-gray-300 hover:text-sage-green transition-transform hover:scale-125"><Facebook size={32} /></a>
+              <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-sage-green transition-transform hover:scale-125"><Instagram size={32} /></a>
+              <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-sage-green transition-transform hover:scale-125"><Facebook size={32} /></a>
             </div>
           </div>
         </div>
@@ -161,6 +164,8 @@ const Navbar = () => {
 const Footer = () => {
   const location = useLocation();
   const mapLink = "https://www.google.com/maps/search/?api=1&query=BMR+Mall+No+1+/+398,+OMR,+Navalur,+Chennai+600130";
+  const INSTAGRAM_URL = "https://www.instagram.com/meraki_yogaandhealing?igsh=MWcweTdwZm8zODk4cQ%3D%3D&utm_source=qr";
+  const FACEBOOK_URL = "https://www.facebook.com/share/181EoAbr7H/?mibextid=wwXIfr";
 
   if (location.pathname.startsWith('/admin/dashboard')) return null;
 
@@ -211,8 +216,8 @@ const Footer = () => {
           <div>
             <h4 className="font-serif text-xl font-bold text-white mb-8">Follow</h4>
             <div className="flex items-center gap-6">
-              <a href="#" className="p-4 bg-white/5 rounded-full text-white hover:bg-sage-green hover:text-deep-green transition-all shadow-xl transform hover:-translate-y-2"><Instagram size={24} /></a>
-              <a href="#" className="p-4 bg-white/5 rounded-full text-white hover:bg-sage-green hover:text-deep-green transition-all shadow-xl transform hover:-translate-y-2"><Facebook size={24} /></a>
+              <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="p-4 bg-white/5 rounded-full text-white hover:bg-sage-green hover:text-deep-green transition-all shadow-xl transform hover:-translate-y-2"><Instagram size={24} /></a>
+              <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer" className="p-4 bg-white/5 rounded-full text-white hover:bg-sage-green hover:text-deep-green transition-all shadow-xl transform hover:-translate-y-2"><Facebook size={24} /></a>
             </div>
           </div>
         </div>
