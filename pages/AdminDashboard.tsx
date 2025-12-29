@@ -40,7 +40,8 @@ import {
 import * as framerMotion from 'framer-motion';
 
 const motion = (framerMotion as any).motion || {
-  div: ({ children, className, style, onClick }: any) => <div className={className} style={style} onClick={onClick}>{children}</div>
+  div: ({ children, className, style, onClick }: any) => <div className={className} style={style} onClick={onClick}>{children}</div>,
+  aside: ({ children, className, style }: any) => <aside className={className} style={style}>{children}</aside>
 };
 const AnimatePresence = (framerMotion as any).AnimatePresence || (({ children }: any) => <>{children}</>);
 
@@ -243,6 +244,41 @@ const AdminDashboard = () => {
     { id: 'feedback', label: 'Feedback', icon: <Quote size={20} /> },
     { id: 'blog', label: 'Blog', icon: <PenTool size={20} /> },
   ];
+
+  const SidebarContent = ({ onClose }: { onClose?: () => void }) => (
+    <div className="flex flex-col h-full bg-deep-green text-white">
+      <div className="p-6 border-b border-white/10 flex items-center justify-between shrink-0">
+        <Link to="/" className="font-serif text-2xl font-bold flex items-center gap-2" onClick={onClose}>
+          <ShieldCheck size={28} className="text-sage-green" />
+          <span className="tracking-tight">Meraki Admin</span>
+        </Link>
+        {onClose && (
+          <button onClick={onClose} className="md:hidden p-2 hover:bg-white/10 rounded-lg text-white/70 hover:text-white transition-colors">
+            <X size={24} />
+          </button>
+        )}
+      </div>
+      <nav className="flex-1 min-h-0 py-8 px-4 space-y-2 overflow-y-auto">
+        {navItems.map(item => (
+          <button 
+            key={item.id} 
+            onClick={() => { 
+              setActiveTab(item.id); 
+              if (onClose) onClose(); 
+            }} 
+            className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all text-left ${activeTab === item.id ? 'bg-white/10 text-white ring-1 ring-white/20' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+          >
+            {item.icon} {item.label}
+          </button>
+        ))}
+      </nav>
+      <div className="p-6 border-t border-white/5">
+         <button onClick={() => { if(window.confirm('Logout?')) { supabase.auth.signOut().then(() => navigate('/admin')); }}} className="w-full flex items-center justify-center gap-3 px-4 py-3.5 text-[10px] font-black text-white bg-red-600/90 rounded-2xl transition-all shadow-lg active:scale-95 border border-red-500/30 uppercase tracking-[0.2em]">
+           <LogOut size={18} /> LOG OUT
+         </button>
+      </div>
+    </div>
+  );
 
   const renderFormFields = () => {
     const inputClass = "w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sage-green outline-none transition-all text-sm";
@@ -710,37 +746,46 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
+      {/* Mobile Header */}
       <header className="md:hidden flex items-center justify-between px-6 py-4 bg-deep-green text-white fixed top-0 w-full z-[80] shadow-md h-[64px]">
-        <button onClick={() => setIsSidebarOpen(true)} className="p-2 -ml-2 hover:bg-white/10 rounded-lg"><Menu size={24} /></button>
+        <button onClick={() => setIsSidebarOpen(true)} className="p-2 -ml-2 hover:bg-white/10 rounded-lg transition-colors">
+          <Menu size={24} />
+        </button>
         <div className="font-serif text-xl font-bold tracking-tight">Meraki Admin</div>
         <div className="w-8"></div>
       </header>
 
+      {/* Mobile Sidebar Overlay */}
+      <AnimatePresence>
+        {isSidebarOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsSidebarOpen(false)}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[90] md:hidden"
+            />
+            <motion.aside
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed inset-y-0 left-0 w-72 bg-deep-green z-[100] md:hidden shadow-2xl overflow-hidden"
+            >
+              <SidebarContent onClose={() => setIsSidebarOpen(false)} />
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Desktop Sidebar */}
       <aside className="hidden md:block w-72 fixed inset-y-0 left-0 z-40 border-r border-gray-100 bg-deep-green overflow-hidden">
-        {/* Reuse sidebar content */}
-        <div className="flex flex-col h-full bg-deep-green text-white">
-          <div className="p-6 border-b border-white/10 flex items-center shrink-0">
-            <Link to="/" className="font-serif text-2xl font-bold flex items-center gap-2">
-              <ShieldCheck size={28} className="text-sage-green" />
-              <span className="tracking-tight">Meraki Admin</span>
-            </Link>
-          </div>
-          <nav className="flex-1 min-h-0 py-8 px-4 space-y-2 overflow-y-auto">
-            {navItems.map(item => (
-              <button key={item.id} onClick={() => setActiveTab(item.id)} className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all text-left ${activeTab === item.id ? 'bg-white/10 text-white ring-1 ring-white/20' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
-                {item.icon} {item.label}
-              </button>
-            ))}
-          </nav>
-          <div className="p-6 border-t border-white/5">
-             <button onClick={() => { if(window.confirm('Logout?')) { supabase.auth.signOut().then(() => navigate('/admin')); }}} className="w-full flex items-center justify-center gap-3 px-4 py-3.5 text-[10px] font-black text-white bg-red-600/90 rounded-2xl transition-all shadow-lg active:scale-95 border border-red-500/30 uppercase tracking-[0.2em]">
-               <LogOut size={18} /> LOG OUT
-             </button>
-          </div>
-        </div>
+        <SidebarContent />
       </aside>
 
       <main className="flex-1 md:ml-72 min-h-screen flex flex-col">
+        {/* Top Header Section */}
         <div className="hidden md:flex items-center justify-between px-10 py-5 bg-white border-b border-gray-100 sticky top-0 z-30">
             <h1 className="font-serif text-2xl text-deep-green capitalize">{activeTab}</h1>
             <div className="flex items-center gap-4 bg-gray-50 px-5 py-2 rounded-full border border-gray-100">
@@ -760,8 +805,8 @@ const AdminDashboard = () => {
         <form onSubmit={handleSave} className="space-y-6">
             {renderFormFields()}
             <div className="flex justify-end gap-3 pt-6 border-t border-gray-50 mt-8">
-              <button type="button" onClick={resetForm} className="px-6 py-2.5 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-gray-600">Cancel</button>
-              <button type="submit" disabled={isSaving} className="bg-deep-green text-white px-8 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shadow-lg hover:bg-opacity-90 active:scale-95 disabled:opacity-50">
+              <button type="button" onClick={resetForm} className="px-6 py-2.5 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-gray-600 transition-colors">Cancel</button>
+              <button type="submit" disabled={isSaving} className="bg-deep-green text-white px-8 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shadow-lg hover:bg-opacity-90 active:scale-95 disabled:opacity-50 transition-all">
                 {isSaving ? <Loader2 className="animate-spin" size={16} /> : <CheckSquare size={16} />}
                 {editingItem ? 'Update Changes' : 'Create Record'}
               </button>
